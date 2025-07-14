@@ -1,0 +1,571 @@
+[
+  {
+    "type": "abbrev",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "bracketed_binder",
+          "named": true
+        },
+        {
+          "type": "decl_ident",
+          "named": true
+        },
+        {
+          "type": "decl_val",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributes",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "binder_ident",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "hole",
+          "named": true
+        },
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "bracketed_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "explicit_binder",
+          "named": true
+        },
+        {
+          "type": "implicit_binder",
+          "named": true
+        },
+        {
+          "type": "inst_binder",
+          "named": true
+        },
+        {
+          "type": "strict_implicit_binder",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "char_lit",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "decl_ident",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "decl_val",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "decl_val_simple",
+          "named": true
+        },
+        {
+          "type": "where_struct_inst",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "decl_val_simple",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "abbrev",
+          "named": true
+        },
+        {
+          "type": "attributes",
+          "named": true
+        },
+        {
+          "type": "definition",
+          "named": true
+        },
+        {
+          "type": "documentation",
+          "named": true
+        },
+        {
+          "type": "noncomputable",
+          "named": true
+        },
+        {
+          "type": "visibility",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "definition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "bracketed_binder",
+          "named": true
+        },
+        {
+          "type": "decl_ident",
+          "named": true
+        },
+        {
+          "type": "decl_val",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "documentation",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "explicit_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ident",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "implicit_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inst_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "lean",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "literal",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "char_lit",
+          "named": true
+        },
+        {
+          "type": "name_lit",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "raw_str_lit",
+          "named": true
+        },
+        {
+          "type": "str_lit",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "name_lit",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "number",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "raw_str_lit",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "str_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "str_lit",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "strict_implicit_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "term",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_spec",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "visibility",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "where_struct_inst",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "\n",
+    "named": false
+  },
+  {
+    "type": "\"",
+    "named": false
+  },
+  {
+    "type": "'",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-/",
+    "named": false
+  },
+  {
+    "type": ".",
+    "named": false
+  },
+  {
+    "type": ".{",
+    "named": false
+  },
+  {
+    "type": "/--",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": ":=",
+    "named": false
+  },
+  {
+    "type": "@[",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "\\",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "`",
+    "named": false
+  },
+  {
+    "type": "abbrev",
+    "named": false
+  },
+  {
+    "type": "def",
+    "named": false
+  },
+  {
+    "type": "hole",
+    "named": true
+  },
+  {
+    "type": "noncomputable",
+    "named": true
+  },
+  {
+    "type": "private",
+    "named": false
+  },
+  {
+    "type": "protected",
+    "named": false
+  },
+  {
+    "type": "str_content",
+    "named": true
+  },
+  {
+    "type": "u",
+    "named": false
+  },
+  {
+    "type": "where",
+    "named": false
+  },
+  {
+    "type": "x",
+    "named": false
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "{{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
+  },
+  {
+    "type": "}}",
+    "named": false
+  },
+  {
+    "type": "«",
+    "named": false
+  },
+  {
+    "type": "»",
+    "named": false
+  },
+  {
+    "type": "⦃",
+    "named": false
+  },
+  {
+    "type": "⦄",
+    "named": false
+  }
+]
