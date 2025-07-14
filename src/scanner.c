@@ -62,6 +62,9 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
 }
 
 static inline bool scan_raw_string_content(Scanner *scanner, TSLexer *lexer) {
+  if (scanner->opening_hash_count == 0) {
+    return false;
+  }
   for (;;) {
     if (lexer->eof(lexer)) {
       return false;
@@ -90,6 +93,7 @@ static inline bool scan_raw_string_end(Scanner *scanner, TSLexer *lexer) {
   for (unsigned i = 0; i < scanner->opening_hash_count; i++) {
     advance(lexer);
   }
+  scanner->opening_hash_count = 0;
   lexer->result_symbol = RAW_STRING_LITERAL_END;
   return true;
 }
