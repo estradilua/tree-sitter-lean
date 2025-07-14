@@ -14,7 +14,13 @@ import term from './grammar/term.js';
 export default grammar({
   name: "lean",
 
-  externals: $ => [$._raw_str_start, $.raw_str_content, $._raw_str_end],
+  externals: $ => [
+    $._raw_str_start,
+    $.raw_str_content,
+    $._raw_str_end,
+    $._indent_guard_start,
+    $._indent_guard_continue
+  ],
 
   rules: {
     lean: $ => repeat(
