@@ -1,5 +1,6 @@
 #include "tree_sitter/alloc.h"
 #include "tree_sitter/parser.h"
+#include <wctype.h>
 
 enum TokenType {
   RAW_STRING_LITERAL_START,
@@ -37,9 +38,16 @@ void tree_sitter_lean_external_scanner_deserialize(void *payload,
   }
 }
 
+static void skip_whitespace(TSLexer *lexer) {
+  while (iswspace(lexer->lookahead) && !lexer->eof(lexer)) {
+    lexer->advance(lexer, true);
+  }
+}
+
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
+  skip_whitespace(lexer);
   if (lexer->lookahead != 'r') {
     return false;
   }
@@ -57,7 +65,6 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
   advance(lexer);
   scanner->opening_hash_count = opening_hash_count;
 
-  lexer->result_symbol = RAW_STRING_LITERAL_START;
   return true;
 }
 
@@ -79,7 +86,6 @@ static inline bool scan_raw_string_content(Scanner *scanner, TSLexer *lexer) {
         hash_count++;
       }
       if (hash_count == scanner->opening_hash_count) {
-        lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;
         return true;
       }
     } else {
@@ -89,12 +95,14 @@ static inline bool scan_raw_string_content(Scanner *scanner, TSLexer *lexer) {
 }
 
 static inline bool scan_raw_string_end(Scanner *scanner, TSLexer *lexer) {
+  if (lexer->lookahead != '"') {
+    return false;
+  }
   advance(lexer);
   for (unsigned i = 0; i < scanner->opening_hash_count; i++) {
     advance(lexer);
   }
   scanner->opening_hash_count = 0;
-  lexer->result_symbol = RAW_STRING_LITERAL_END;
   return true;
 }
 
@@ -102,16 +110,18 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
-  if (valid_symbols[RAW_STRING_LITERAL_START] &&
-      (lexer->lookahead == 'r')) {
+  if (valid_symbols[RAW_STRING_LITERAL_START]) {
+    lexer->result_symbol = RAW_STRING_LITERAL_START;
     return scan_raw_string_start(scanner, lexer);
   }
 
   if (valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
+    lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;
     return scan_raw_string_content(scanner, lexer);
   }
 
-  if (valid_symbols[RAW_STRING_LITERAL_END] && lexer->lookahead == '"') {
+  if (valid_symbols[RAW_STRING_LITERAL_END]) {
+    lexer->result_symbol = RAW_STRING_LITERAL_END;
     return scan_raw_string_end(scanner, lexer);
   }
 
