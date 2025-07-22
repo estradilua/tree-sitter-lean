@@ -1,66 +1,36 @@
-#include "tree_sitter/alloc.h"
+#include "tree_sitter/array.h"
 #include "tree_sitter/parser.h"
-#include <string.h>
+
+#include <stdint.h>
 #include <wctype.h>
 
 enum TokenType {
   RAW_STRING_LITERAL_START,
   RAW_STRING_LITERAL_CONTENT,
   RAW_STRING_LITERAL_END,
-  INDENT_GUARD_START,
-  INDENT_GUARD_CONTINUE
+
+  // idea
+  /* INDENT, */
+  /* DEDENT_EQ, */
+  /* DEDENT_LE, */
+
+  PUSH_COL,
+  POP_COL,
+  GUARD_COL_EQ,
+  MATCH_ALT_START,
+  ERROR_SENTINEL,
 };
 
 typedef struct {
   uint8_t opening_hash_count;
-  uint32_t indent_level;
+  Array(uint8_t) cols;
 } Scanner;
-
-void *tree_sitter_lean_external_scanner_create() {
-  return ts_calloc(1, sizeof(Scanner));
-}
-
-void tree_sitter_lean_external_scanner_destroy(void *payload) {
-  ts_free((Scanner *)payload);
-}
-
-const size_t i32s = sizeof(uint32_t);
-
-unsigned tree_sitter_lean_external_scanner_serialize(void *payload,
-                                                     char *buffer) {
-  Scanner *scanner = (Scanner *)payload;
-  buffer[0] = (char)scanner->opening_hash_count;
-  memcpy(&buffer[1], &scanner->indent_level, i32s);
-  return 1 + i32s;
-}
-
-void tree_sitter_lean_external_scanner_deserialize(void *payload,
-                                                   const char *buffer,
-                                                   unsigned length) {
-  Scanner *scanner = (Scanner *)payload;
-  scanner->opening_hash_count = 0;
-  scanner->indent_level = 0;
-  if (length == 1 + i32s) {
-    Scanner *scanner = (Scanner *)payload;
-    scanner->opening_hash_count = buffer[0];
-    memcpy(&scanner->indent_level, &buffer[1], i32s);
-  }
-}
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static void skip_whitespace(TSLexer *lexer) {
-  while (iswspace(lexer->lookahead) && !lexer->eof(lexer)) {
-    skip(lexer);
-  }
-}
+static inline bool eof(TSLexer *lexer) { return lexer->eof(lexer); }
 
 static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
-  skip_whitespace(lexer);
-  if (lexer->lookahead != 'r') {
-    return false;
-  }
   advance(lexer);
 
   uint8_t opening_hash_count = 0;
@@ -74,6 +44,7 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
   }
   advance(lexer);
   scanner->opening_hash_count = opening_hash_count;
+  lexer->mark_end(lexer);
 
   return true;
 }
@@ -83,7 +54,7 @@ static inline bool scan_raw_string_content(Scanner *scanner, TSLexer *lexer) {
     return false;
   }
   for (;;) {
-    if (lexer->eof(lexer)) {
+    if (eof(lexer)) {
       return false;
     }
     if (lexer->lookahead == '"') {
@@ -116,32 +87,13 @@ static inline bool scan_raw_string_end(Scanner *scanner, TSLexer *lexer) {
   return true;
 }
 
-static inline bool scan_indent_guard_start(Scanner *scanner, TSLexer *lexer) {
-  skip_whitespace(lexer);
-
-  scanner->indent_level = lexer->get_column(lexer);
-  return true;
-}
-
-static inline bool scan_indent_guard_continue(Scanner *scanner,
-                                              TSLexer *lexer) {
-  skip_whitespace(lexer);
-
-  if (lexer->get_column(lexer) != scanner->indent_level) {
-    return false;
-  }
-
-  return true;
-}
-
 bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
-  if (valid_symbols[RAW_STRING_LITERAL_START]) {
-    lexer->result_symbol = RAW_STRING_LITERAL_START;
-    return scan_raw_string_start(scanner, lexer);
-  }
+  // eof or error recovery
+  if (valid_symbols[ERROR_SENTINEL] || eof(lexer))
+    return false;
 
   if (valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
     lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;
@@ -153,15 +105,115 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return scan_raw_string_end(scanner, lexer);
   }
 
-  if (valid_symbols[INDENT_GUARD_START]) {
-    lexer->result_symbol = INDENT_GUARD_START;
-    return scan_indent_guard_start(scanner, lexer);
+  lexer->mark_end(lexer);
+
+  bool skipped_newline = false;
+  while (!eof(lexer)) {
+    if (lexer->lookahead == '\n')
+      skipped_newline = true;
+    else if (!iswspace(lexer->lookahead))
+      break;
+    skip(lexer);
   }
 
-  if (valid_symbols[INDENT_GUARD_CONTINUE]) {
-    lexer->result_symbol = INDENT_GUARD_CONTINUE;
-    return scan_indent_guard_continue(scanner, lexer);
+  uint8_t indent = lexer->get_column(lexer);
+
+  if (valid_symbols[RAW_STRING_LITERAL_START] && lexer->lookahead == 'r') {
+    lexer->result_symbol = RAW_STRING_LITERAL_START;
+    return scan_raw_string_start(scanner, lexer);
+  }
+
+  if (valid_symbols[PUSH_COL]) {
+    lexer->result_symbol = PUSH_COL;
+    array_push(&scanner->cols, indent);
+    lexer->log(lexer, "PUSH %d, SIZE NOW %d", indent, scanner->cols.size);
+    lexer->mark_end(lexer);
+    return true;
+  }
+
+  if ((valid_symbols[POP_COL] || valid_symbols[GUARD_COL_EQ] ||
+       valid_symbols[MATCH_ALT_START]) &&
+      !scanner->cols.size) {
+    lexer->log(lexer, "this log smells of bugs");
+    return false;
+  }
+
+  if (skipped_newline && valid_symbols[GUARD_COL_EQ]) {
+    lexer->result_symbol = GUARD_COL_EQ;
+    lexer->log(lexer, "GUARD_EQ");
+    return lexer->get_column(lexer) == *array_back(&scanner->cols);
+  }
+
+  if (valid_symbols[MATCH_ALT_START]) {
+    lexer->result_symbol = MATCH_ALT_START;
+    lexer->mark_end(lexer);
+    if (eof(lexer) || lexer->lookahead != '|' ||
+        indent < *array_back(&scanner->cols))
+      return false;
+
+    skip(lexer);
+
+    // check for '=>' construct
+    uint8_t state = 0;
+    for (;;) {
+      if (eof(lexer))
+        return false;
+      else if (lexer->lookahead == '=')
+        state = 1;
+      else if (state == 1 && lexer->lookahead == '>')
+        break;
+      else
+        state = 0;
+      
+      skip(lexer);
+    }
+
+    return true;
+  }
+
+  if (valid_symbols[POP_COL]) {
+    lexer->result_symbol = POP_COL;
+    lexer->log(lexer, "POP");
+    array_pop(&scanner->cols);
+    return true;
   }
 
   return false;
+}
+
+unsigned tree_sitter_lean_external_scanner_serialize(void *payload,
+                                                     char *buffer) {
+  Scanner *scanner = (Scanner *)payload;
+  size_t size = 0;
+  buffer[size++] = scanner->opening_hash_count;
+  for (unsigned i = 0; i < scanner->cols.size; i++) {
+    buffer[size++] = *array_get(&scanner->cols, i);
+  }
+  return size;
+}
+
+void tree_sitter_lean_external_scanner_deserialize(void *payload,
+                                                   const char *buffer,
+                                                   unsigned length) {
+  Scanner *scanner = (Scanner *)payload;
+  array_delete(&scanner->cols);
+  if (length > 0) {
+    size_t size = 0;
+    scanner->opening_hash_count = buffer[size++];
+    for (; size < length; size++) {
+      array_push(&scanner->cols, buffer[size]);
+    }
+  }
+}
+
+void *tree_sitter_lean_external_scanner_create() {
+  Scanner *scanner = ts_calloc(1, sizeof(Scanner));
+  array_init(&scanner->cols);
+  return scanner;
+}
+
+void tree_sitter_lean_external_scanner_destroy(void *payload) {
+  Scanner *scanner = (Scanner *)payload;
+  array_delete(&scanner->cols);
+  ts_free(scanner);
 }

@@ -8,6 +8,7 @@
 // @ts-check
 
 import decl from './grammar/decl.js';
+import docs from './grammar/docs.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
 
@@ -18,8 +19,11 @@ export default grammar({
     $._raw_str_start,
     $.raw_str_content,
     $._raw_str_end,
-    $._indent_guard_start,
-    $._indent_guard_continue
+    $._push_col,
+    $._pop_col,
+    $._guard_col_eq,
+    $._match_alt_start,
+    $.__error_sentinel,
   ],
 
   rules: {
@@ -28,7 +32,8 @@ export default grammar({
     ),
 
     ...decl,
+    ...docs,
     ...lits,
     ...term,
-  }
+  },
 });

@@ -110,6 +110,10 @@
       "required": true,
       "types": [
         {
+          "type": "decl_val_eqns",
+          "named": true
+        },
+        {
           "type": "decl_val_simple",
           "named": true
         },
@@ -121,7 +125,7 @@
     }
   },
   {
-    "type": "decl_val_simple",
+    "type": "decl_val_eqns",
     "named": true,
     "fields": {},
     "children": {
@@ -129,7 +133,26 @@
       "required": true,
       "types": [
         {
+          "type": "match_alts",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "decl_val_simple",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
           "type": "term",
+          "named": true
+        },
+        {
+          "type": "where_decls",
           "named": true
         }
       ]
@@ -326,6 +349,36 @@
     }
   },
   {
+    "type": "match_alt",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "match_alts",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "match_alt",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "name_lit",
     "named": true,
     "fields": {},
@@ -385,6 +438,41 @@
     }
   },
   {
+    "type": "struct_inst_field",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binder_ident",
+          "named": true
+        },
+        {
+          "type": "bracketed_binder",
+          "named": true
+        },
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "match_alts",
+          "named": true
+        },
+        {
+          "type": "term",
+          "named": true
+        },
+        {
+          "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "term",
     "named": true,
     "fields": {},
@@ -426,7 +514,21 @@
   {
     "type": "where_struct_inst",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "struct_inst_field",
+          "named": true
+        },
+        {
+          "type": "where_decls",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "\n",
@@ -477,6 +579,14 @@
     "named": false
   },
   {
+    "type": ";",
+    "named": false
+  },
+  {
+    "type": "=>",
+    "named": false
+  },
+  {
     "type": "@[",
     "named": false
   },
@@ -497,28 +607,12 @@
     "named": false
   },
   {
-    "type": "abbrev",
-    "named": false
-  },
-  {
-    "type": "def",
-    "named": false
-  },
-  {
     "type": "hole",
     "named": true
   },
   {
     "type": "noncomputable",
     "named": true
-  },
-  {
-    "type": "private",
-    "named": false
-  },
-  {
-    "type": "protected",
-    "named": false
   },
   {
     "type": "str_content",
@@ -533,6 +627,10 @@
     "named": false
   },
   {
+    "type": "where_decls",
+    "named": true
+  },
+  {
     "type": "x",
     "named": false
   },
@@ -542,6 +640,10 @@
   },
   {
     "type": "{{",
+    "named": false
+  },
+  {
+    "type": "|",
     "named": false
   },
   {

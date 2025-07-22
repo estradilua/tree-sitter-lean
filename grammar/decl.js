@@ -7,16 +7,17 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+import { sepBy1Indent } from "./term.js";
+
 const optDeclSig = $ => seq(
   repeat(choice($.binder_ident, $.bracketed_binder)),
   optional($.type_spec)
 )
 
 export default {
-  documentation: _ => seq('/--', '-/'),
   attributes: _ => seq('@[', ']'),
-  visibility: _ => choice('private', 'protected'),
-  noncomputable: _ => 'noncomputable',
+  visibility: _ => choice(/private\s/, /protected\s/),
+  noncomputable: _ => /noncomputable\s/,
 
   declaration: $ => seq(
     optional($.documentation),
@@ -36,16 +37,18 @@ export default {
     ))
   ),
 
-  decl_val_simple: $ => seq(':=', $.term, // $.termination_hints, optional($.where_decls)
+  decl_val_simple: $ => seq(':=', $.term, // $.termination_hints, 
+    optional($.where_decls)),
+  decl_val_eqns: $ => seq($.match_alts),
+
+  where_struct_inst: $ => seq(
+    'where',
+    optional(sepBy1Indent($, $.struct_inst_field, ';')),
+    optional($.where_decls)
   ),
-  // decl_val_eqns: $ => seq($.match_alts, $.termination_hints, optional($.where_decls)),
 
-  where_struct_inst: $ => seq('where', // $.struct_inst_fields, optional($.where_decls)
-  ),
+  decl_val: $ => choice($.decl_val_simple, $.decl_val_eqns, $.where_struct_inst),
 
-  decl_val: $ => choice($.decl_val_simple, // $.decl_val_eqns,
-    $.where_struct_inst),
-
-  abbrev: $ => seq('abbrev', $.decl_ident, optDeclSig($), $.decl_val),
-  definition: $ => seq('def', $.decl_ident, optDeclSig($), $.decl_val),
+  abbrev: $ => seq(/abbrev\s/, $.decl_ident, optDeclSig($), $.decl_val),
+  definition: $ => seq(/def\s/, $.decl_ident, optDeclSig($), $.decl_val),
 }
