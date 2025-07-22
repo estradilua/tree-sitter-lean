@@ -1146,17 +1146,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ":="
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "where"
-                  }
-                ]
+                "type": "STRING",
+                "value": "where"
               },
               {
                 "type": "BLANK"
@@ -1252,17 +1243,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ":="
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "where"
-                  }
-                ]
+                "type": "STRING",
+                "value": "where"
               },
               {
                 "type": "BLANK"
@@ -2163,41 +2145,37 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
+                "type": "SEQ",
                 "members": [
                   {
                     "type": "STRING",
-                    "value": ":="
+                    "value": "where"
                   },
                   {
-                    "type": "STRING",
-                    "value": "where"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "struct_ctor"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "struct_fields"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   }
                 ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "struct_ctor"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "struct_fields"
               },
               {
                 "type": "BLANK"
@@ -2507,7 +2485,7 @@
           "members": [
             {
               "type": "PATTERN",
-              "value": "[[_\\pL]--λΠΣ][_!?\\pL[₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*"
+              "value": "[[_\\pL]--λΠΣ][_!?\\pL[₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ']*"
             },
             {
               "type": "SEQ",

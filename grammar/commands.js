@@ -94,11 +94,11 @@ export default {
     $._eq_col_start))))),
 
   inductive: $ => prec.right(seq('inductive', $.decl_ident, optDeclSig($),
-    optional(choice(':=', 'where')), repeat($.ctor), optional($.computed_fields),
+    optional('where'), repeat($.ctor), optional($.computed_fields),
     optional($.deriving))),
 
   class_inductive: $ => prec.right(seq('class', 'inductive', $.decl_ident, optDeclSig($),
-    optional(choice(':=', 'where')), repeat($.ctor), optional($.deriving))),
+    optional('where'), repeat($.ctor), optional($.deriving))),
 
   struct_explicit_binder: $ => seq(declModifiers($), '(', repeat1($.ident), optDeclSig($),
     optional(seq(':=', $.term)), ')'),
@@ -114,6 +114,6 @@ export default {
   
   structure: $ => prec.right(seq(choice('structure', 'class'), $.decl_ident,
     repeat($.bracketed_binder), optional($.type_spec), optional($.extends),
-    optional(choice(':=', 'where')), optional($.struct_ctor), optional($.struct_fields),
+    optional(seq('where', optional($.struct_ctor), optional($.struct_fields))),
     optional($.deriving))),
 }
