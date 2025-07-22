@@ -161,13 +161,9 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     }
   }
 
-  if (valid_symbols[EQ_COL_START]) {
+  if (valid_symbols[EQ_COL_START] && skipped_newline && scanner->cols.size &&
+      indent == *array_back(&scanner->cols)) {
     lexer->result_symbol = EQ_COL_START;
-    lexer->mark_end(lexer);
-    if (eof(lexer) || !scanner->cols.size ||
-        indent != *array_back(&scanner->cols))
-      return false;
-
     return true;
   }
 
