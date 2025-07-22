@@ -30,6 +30,7 @@ const declModifiers = $ => seq(
 
 export default {
 
+  documentation: $ => seq('/--', repeat(/[^\s]+/) , '-/'),
   visibility: _ => choice(/private\s/, /protected\s/),
   noncomputable: _ => /noncomputable\s/,
 

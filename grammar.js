@@ -8,7 +8,6 @@
 // @ts-check
 
 import decl from './grammar/decl.js';
-import docs from './grammar/docs.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
 
@@ -32,7 +31,6 @@ export default grammar({
     ),
 
     ...decl,
-    ...docs,
     ...lits,
     ...term,
   },

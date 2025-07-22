@@ -434,24 +434,9 @@
     }
   },
   {
-    "type": "doc_code",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "documentation",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "doc_code",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "example",
