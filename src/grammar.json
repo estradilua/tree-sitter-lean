@@ -203,6 +203,10 @@
               "type": "SEQ",
               "members": [
                 {
+                  "type": "SYMBOL",
+                  "name": "_push_col"
+                },
+                {
                   "type": "SEQ",
                   "members": [
                     {
@@ -218,13 +222,8 @@
                             "type": "CHOICE",
                             "members": [
                               {
-                                "type": "SEQ",
-                                "members": [
-                                  {
-                                    "type": "PATTERN",
-                                    "value": "[\\s--\\n]*\\n\\s*"
-                                  }
-                                ]
+                                "type": "SYMBOL",
+                                "name": "_eq_col_start"
                               },
                               {
                                 "type": "STRING",
@@ -1012,7 +1011,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_push_col"
+          "name": "_match_alts_start"
         },
         {
           "type": "SEQ",
@@ -1130,6 +1129,10 @@
         {
           "type": "SYMBOL",
           "name": "let_id_lhs"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "match_alts"
         }
       ]
     },
@@ -1184,8 +1187,51 @@
       ]
     },
     "where_decls": {
-      "type": "STRING",
-      "value": "IMPOSSIBLE"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "where"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_push_col"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "let_rec_decl"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_eq_col_start"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ";"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "let_rec_decl"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
     },
     "struct_inst_field": {
       "type": "SEQ",
@@ -1292,15 +1338,15 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_pop_col"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_guard_col_eq"
+      "name": "_match_alts_start"
     },
     {
       "type": "SYMBOL",
       "name": "_match_alt_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_eq_col_start"
     },
     {
       "type": "SYMBOL",

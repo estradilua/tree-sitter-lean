@@ -7,21 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const newline_ws = /[\s--\n]*\n\s*/
-
 export const sepBy1 = (p, sep) => seq(p, repeat(seq(sep, p)))
-export const sepBy1Indent = ($, p, sep) => seq(
-  // $._push_col,
-  sepBy1(p, choice(seq(newline_ws// , $._guard_col_eq
-  ), sep)),
-  // $._pop_col
-)
-export const many1Indent = ($, p) => seq(
-  // $._push_col,
-  sepBy1(p, seq(newline_ws// , $._guard_col_ge
-  )),
-  // $._pop_col
-)
 
 const optIdent = $ => optional(seq($.ident, ':'))
 
@@ -59,7 +45,7 @@ export default {
 
   match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), '=>', $.term),
 
-  match_alts: $ => seq($._push_col, sepBy1($.match_alt, $._match_alt_start)),
+  match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start)),
 
   let_id_lhs: $ => seq(
     $.binder_ident,
@@ -68,7 +54,7 @@ export default {
   ),
   let_id_decl: $ => seq($.let_id_lhs, ':=', $.term),
   let_pat_decl: $ => seq($.term, optional($.type_spec), ':=', $.term),
-  let_eqns_decl: $ => seq($.let_id_lhs, ),
+  let_eqns_decl: $ => seq($.let_id_lhs, $.match_alts),
   let_decl: $ => choice($.let_id_decl, $.let_pat_decl, $.let_eqns_decl),
   let_rec_decl: $ => seq(
     optional($.documentation),
@@ -76,7 +62,11 @@ export default {
     $.let_decl,
     // $.termination_suffix
   ),
-  where_decls: $ => 'IMPOSSIBLE', // seq('where', sepBy1Indent($, $.let_rec_decl, ';')),
+  where_decls: $ => seq(
+    'where',
+    $._push_col,
+    sepBy1($.let_rec_decl, choice($._eq_col_start, ';')),
+  ),
 
   struct_inst_field: $ => seq(
     $.ident,

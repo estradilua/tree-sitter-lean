@@ -20,9 +20,9 @@ export default grammar({
     $.raw_str_content,
     $._raw_str_end,
     $._push_col,
-    $._pop_col,
-    $._guard_col_eq,
+    $._match_alts_start,
     $._match_alt_start,
+    $._eq_col_start,
     $.__error_sentinel,
   ],
 

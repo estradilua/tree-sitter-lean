@@ -9,15 +9,10 @@ enum TokenType {
   RAW_STRING_LITERAL_CONTENT,
   RAW_STRING_LITERAL_END,
 
-  // idea
-  /* INDENT, */
-  /* DEDENT_EQ, */
-  /* DEDENT_LE, */
-
   PUSH_COL,
-  POP_COL,
-  GUARD_COL_EQ,
+  MATCH_ALTS_START,
   MATCH_ALT_START,
+  EQ_COL_START,
   ERROR_SENTINEL,
 };
 
@@ -115,6 +110,8 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       break;
     skip(lexer);
   }
+  if (eof(lexer))
+    return false;
 
   uint8_t indent = lexer->get_column(lexer);
 
@@ -131,26 +128,12 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if ((valid_symbols[POP_COL] || valid_symbols[GUARD_COL_EQ] ||
-       valid_symbols[MATCH_ALT_START]) &&
-      !scanner->cols.size) {
-    lexer->log(lexer, "this log smells of bugs");
-    return false;
-  }
+  if (lexer->lookahead == '|' &&
+      (valid_symbols[MATCH_ALTS_START] ||
+       valid_symbols[MATCH_ALT_START] && scanner->cols.size &&
+           indent >= *array_back(&scanner->cols))) {
 
-  if (skipped_newline && valid_symbols[GUARD_COL_EQ]) {
-    lexer->result_symbol = GUARD_COL_EQ;
-    lexer->log(lexer, "GUARD_EQ");
-    return lexer->get_column(lexer) == *array_back(&scanner->cols);
-  }
-
-  if (valid_symbols[MATCH_ALT_START]) {
-    lexer->result_symbol = MATCH_ALT_START;
     lexer->mark_end(lexer);
-    if (eof(lexer) || lexer->lookahead != '|' ||
-        indent < *array_back(&scanner->cols))
-      return false;
-
     skip(lexer);
 
     // check for '=>' construct
@@ -168,13 +151,23 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       skip(lexer);
     }
 
-    return true;
+    if (valid_symbols[MATCH_ALTS_START]) {
+      lexer->result_symbol = MATCH_ALTS_START;
+      array_push(&scanner->cols, indent);
+      return true;
+    } else {
+      lexer->result_symbol = MATCH_ALT_START;
+      return true;
+    }
   }
 
-  if (valid_symbols[POP_COL]) {
-    lexer->result_symbol = POP_COL;
-    lexer->log(lexer, "POP");
-    array_pop(&scanner->cols);
+  if (valid_symbols[EQ_COL_START]) {
+    lexer->result_symbol = EQ_COL_START;
+    lexer->mark_end(lexer);
+    if (eof(lexer) || !scanner->cols.size ||
+        indent != *array_back(&scanner->cols))
+      return false;
+
     return true;
   }
 

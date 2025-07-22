@@ -7,7 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { sepBy1Indent } from "./term.js";
+import { sepBy1 } from "./term.js";
 
 const optDeclSig = $ => seq(
   repeat(choice($.binder_ident, $.bracketed_binder)),
@@ -43,7 +43,7 @@ export default {
 
   where_struct_inst: $ => seq(
     'where',
-    optional(sepBy1Indent($, $.struct_inst_field, ';')),
+    optional(seq($._push_col, sepBy1($.struct_inst_field, choice($._eq_col_start, ';')))),
     optional($.where_decls)
   ),
 
