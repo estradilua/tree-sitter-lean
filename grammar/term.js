@@ -12,11 +12,11 @@ export const sepBy1 = (p, sep) => seq(p, repeat(seq(sep, p)))
 const optIdent = $ => optional(seq($.ident, ':'))
 
 export default {
-  term: $ => repeat1(choice(
+  term: $ => prec.right(repeat1(prec(-10, choice(
     $.literal,
     $.ident,
     /[^\s]/,
-  )),
+  )))),
   ident: $ => seq(
     choice(
       /[[_\pL]--λΠΣ][_!?\pL[₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
@@ -75,5 +75,9 @@ export default {
       optional($.type_spec),
       choice(seq(':=', $.term), $.match_alts)
     ))
-  )
+  ),
+
+  attr_kind: $ => choice('scoped', 'local'),
+  attr_instance: $ => seq(optional($.attr_kind), $.term),
+  attributes: $ => seq('@[', sepBy1($.attr_instance, ','), ']'),
 } 

@@ -13,13 +13,13 @@ const hexDigit = /[0-9a-fA-F]/
 export default {
   literal: $ => choice(
     $.name_lit,
-    $.number,
+    $.num_lit,
     $.char_lit,
     $.str_lit,
     $.raw_str_lit,
   ),
   name_lit: $ => seq('\`', $.ident),
-  number: _ => choice(
+  num_lit: _ => choice(
     /0[bB][01]+/,
     /0[oO][0-7]+/,
     /0[xX][0-9a-fA-F]+/,
