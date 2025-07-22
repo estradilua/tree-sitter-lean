@@ -39,7 +39,6 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
   }
   advance(lexer);
   scanner->opening_hash_count = opening_hash_count;
-  lexer->mark_end(lexer);
 
   return true;
 }
@@ -100,8 +99,6 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return scan_raw_string_end(scanner, lexer);
   }
 
-  lexer->mark_end(lexer);
-
   bool skipped_newline = false;
   while (!eof(lexer)) {
     if (lexer->lookahead == '\n')
@@ -123,8 +120,6 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (valid_symbols[PUSH_COL]) {
     lexer->result_symbol = PUSH_COL;
     array_push(&scanner->cols, indent);
-    lexer->log(lexer, "PUSH %d, SIZE NOW %d", indent, scanner->cols.size);
-    lexer->mark_end(lexer);
     return true;
   }
 
@@ -147,7 +142,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
         break;
       else
         state = 0;
-      
+
       skip(lexer);
     }
 
