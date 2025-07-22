@@ -1,5 +1,5 @@
 /**
- * @file Lean declarations
+ * @file Lean commands
  * @author Lua Reis <me@lua.blog.br>
  * @license GPL-3.0-or-later
  */

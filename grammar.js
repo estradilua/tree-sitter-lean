@@ -7,7 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import decl from './grammar/decl.js';
+import cmds from './grammar/commands.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
 
@@ -30,7 +30,7 @@ export default grammar({
       $.declaration
     ),
 
-    ...decl,
+    ...cmds,
     ...lits,
     ...term,
   },
