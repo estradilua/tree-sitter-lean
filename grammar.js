@@ -26,12 +26,14 @@ export default grammar({
   ],
 
   rules: {
-    lean: $ => repeat(
-      $.declaration
-    ),
+    lean: $ => repeat($.command),
 
     ...cmds,
     ...lits,
     ...term,
+
+    comment: $ => seq('/-', repeat(/[^\s]+/), '-/'),
   },
+
+  extras: $ => [/[\s\n]+/, $.comment],
 });
