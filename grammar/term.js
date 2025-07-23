@@ -6,7 +6,7 @@
 
 /// <reference types="tree-sitter-cli/dsl" />
 
-import { sepBy1 } from "./util.js"
+import { sepBy1, sepBy1Indent } from "./util.js"
 
 // @ts-check
 
@@ -46,7 +46,7 @@ export default {
 
   match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), '=>', $.term),
 
-  match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start)),
+  match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start), $._dedent),
 
   let_id_lhs: $ => seq(
     $.binder_ident,
@@ -63,11 +63,7 @@ export default {
     $.let_decl,
     // $.termination_suffix
   ),
-  where_decls: $ => seq(
-    'where',
-    $._push_col,
-    sepBy1($.let_rec_decl, choice($._eq_col_start, ';')),
-  ),
+  where_decls: $ => seq('where', sepBy1Indent($, $.let_rec_decl, ';')),
 
   struct_inst_field: $ => seq(
     $.ident,

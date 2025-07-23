@@ -9,4 +9,14 @@
 
 export const sepBy1 = (p, sep) => seq(p, repeat(seq(sep, p)))
 
+export const sepBy1Indent = ($, p, sep) => seq(
+  $._push_col,
+  sepBy1(p, choice($._eq_col_start, sep)),
+  $._dedent
+)
+export const sepByIndent = ($, p, sep) => optional(sepBy1Indent($, p, sep))
+
+export const many1Indent = ($, p) => seq($._push_col, sepBy1(p, $._eq_col_start), $._dedent)
+export const manyIndent = ($, p) => optional(many1Indent($, p))
+
 export const oneOf = ($, obj) => choice.apply(null, Object.keys(obj).map(k => $[k]))

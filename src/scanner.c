@@ -13,6 +13,7 @@ enum TokenType {
   MATCH_ALTS_START,
   MATCH_ALT_START,
   EQ_COL_START,
+  DEDENT,
   ERROR_SENTINEL,
 };
 
@@ -85,6 +86,17 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
+  lexer->log(lexer,
+             "valid symbols: start=%d, content=%d, end=%d, push_col=%d, "
+             "alts_start=%d, alt_start=%d, eq_col_start=%d, dedent=%d, "
+             "error_sentinel=%d",
+             valid_symbols[RAW_STRING_LITERAL_START],
+             valid_symbols[RAW_STRING_LITERAL_CONTENT],
+             valid_symbols[RAW_STRING_LITERAL_END], valid_symbols[PUSH_COL],
+             valid_symbols[MATCH_ALTS_START], valid_symbols[MATCH_ALT_START],
+             valid_symbols[EQ_COL_START], valid_symbols[DEDENT],
+             valid_symbols[ERROR_SENTINEL]);
+
   // eof or error recovery
   if (valid_symbols[ERROR_SENTINEL] || eof(lexer))
     return false;
@@ -107,10 +119,19 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       break;
     skip(lexer);
   }
-  if (eof(lexer))
-    return false;
 
   uint8_t indent = lexer->get_column(lexer);
+
+  lexer->log(lexer, "newline: %d", skipped_newline);
+
+  if (valid_symbols[DEDENT] && skipped_newline && scanner->cols.size &&
+      indent < *array_back(&scanner->cols)) {
+    lexer->result_symbol = DEDENT;
+    return true;
+  }
+
+  if (eof(lexer))
+    return false;
 
   if (valid_symbols[RAW_STRING_LITERAL_START] && lexer->lookahead == 'r') {
     lexer->result_symbol = RAW_STRING_LITERAL_START;

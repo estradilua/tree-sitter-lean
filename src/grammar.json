@@ -1751,6 +1751,10 @@
                       }
                     }
                   ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_dedent"
                 }
               ]
             },
@@ -2110,6 +2114,10 @@
                         }
                       }
                     ]
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_dedent"
                   }
                 ]
               },
@@ -2757,6 +2765,10 @@
               }
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
         }
       ]
     },
@@ -3589,6 +3601,10 @@
               }
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_dedent"
         }
       ]
     },
@@ -3746,40 +3762,49 @@
           "value": "where"
         },
         {
-          "type": "SYMBOL",
-          "name": "_push_col"
-        },
-        {
           "type": "SEQ",
           "members": [
             {
               "type": "SYMBOL",
-              "name": "let_rec_decl"
+              "name": "_push_col"
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "CHOICE",
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "let_rec_decl"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
                     "members": [
                       {
-                        "type": "SYMBOL",
-                        "name": "_eq_col_start"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_eq_col_start"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": ";"
+                          }
+                        ]
                       },
                       {
-                        "type": "STRING",
-                        "value": ";"
+                        "type": "SYMBOL",
+                        "name": "let_rec_decl"
                       }
                     ]
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "let_rec_decl"
                   }
-                ]
-              }
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_dedent"
             }
           ]
         }
@@ -3995,6 +4020,10 @@
     {
       "type": "SYMBOL",
       "name": "_eq_col_start"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_dedent"
     },
     {
       "type": "SYMBOL",
