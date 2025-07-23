@@ -55,6 +55,25 @@
     "fields": {}
   },
   {
+    "type": "attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attr_instance",
+          "named": true
+        },
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "attributes",
     "named": true,
     "fields": {},
@@ -148,6 +167,36 @@
     "fields": {}
   },
   {
+    "type": "check",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "check_failure",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "class_inductive",
     "named": true,
     "fields": {},
@@ -181,6 +230,126 @@
         }
       ]
     }
+  },
+  {
+    "type": "command",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "check",
+          "named": true
+        },
+        {
+          "type": "check_failure",
+          "named": true
+        },
+        {
+          "type": "declaration",
+          "named": true
+        },
+        {
+          "type": "deriving",
+          "named": true
+        },
+        {
+          "type": "end",
+          "named": true
+        },
+        {
+          "type": "eval",
+          "named": true
+        },
+        {
+          "type": "eval_bang",
+          "named": true
+        },
+        {
+          "type": "exit",
+          "named": true
+        },
+        {
+          "type": "export",
+          "named": true
+        },
+        {
+          "type": "init_quot",
+          "named": true
+        },
+        {
+          "type": "module_doc",
+          "named": true
+        },
+        {
+          "type": "namespace",
+          "named": true
+        },
+        {
+          "type": "noncomputable_section",
+          "named": true
+        },
+        {
+          "type": "open",
+          "named": true
+        },
+        {
+          "type": "print",
+          "named": true
+        },
+        {
+          "type": "print_axioms",
+          "named": true
+        },
+        {
+          "type": "print_eqns",
+          "named": true
+        },
+        {
+          "type": "print_tac_tags",
+          "named": true
+        },
+        {
+          "type": "section",
+          "named": true
+        },
+        {
+          "type": "set_option",
+          "named": true
+        },
+        {
+          "type": "synth",
+          "named": true
+        },
+        {
+          "type": "universe",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        },
+        {
+          "type": "version",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comment",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "computed_fields",
@@ -439,6 +608,51 @@
     "fields": {}
   },
   {
+    "type": "end",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "eval",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "eval_bang",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "example",
     "named": true,
     "fields": {},
@@ -479,6 +693,21 @@
         },
         {
           "type": "type_spec",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "export",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
           "named": true
         }
       ]
@@ -644,7 +873,7 @@
       "required": false,
       "types": [
         {
-          "type": "declaration",
+          "type": "command",
           "named": true
         }
       ]
@@ -838,6 +1067,11 @@
     }
   },
   {
+    "type": "module_doc",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "name_lit",
     "named": true,
     "fields": {},
@@ -862,6 +1096,36 @@
       "types": [
         {
           "type": "num_lit",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "namespace",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "noncomputable_section",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "ident",
           "named": true
         }
       ]
@@ -904,6 +1168,166 @@
     }
   },
   {
+    "type": "open",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "open_hiding",
+          "named": true
+        },
+        {
+          "type": "open_only",
+          "named": true
+        },
+        {
+          "type": "open_renaming",
+          "named": true
+        },
+        {
+          "type": "open_scoped",
+          "named": true
+        },
+        {
+          "type": "open_simple",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "open_hiding",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "open_only",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "open_renaming",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "open_scoped",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "open_simple",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "print",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "str_lit",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "print_axioms",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "print_eqns",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "print_tac_tags",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "raw_str_lit",
     "named": true,
     "fields": {},
@@ -913,6 +1337,44 @@
       "types": [
         {
           "type": "str_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "section",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "set_option",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "num_lit",
+          "named": true
+        },
+        {
+          "type": "str_lit",
           "named": true
         }
       ]
@@ -1274,6 +1736,21 @@
     }
   },
   {
+    "type": "synth",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "term",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "term",
     "named": true,
     "fields": {},
@@ -1339,6 +1816,36 @@
     }
   },
   {
+    "type": "universe",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "bracketed_binder",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "visibility",
     "named": true,
     "fields": {}
@@ -1386,6 +1893,30 @@
     "named": false
   },
   {
+    "type": "#check",
+    "named": false
+  },
+  {
+    "type": "#check_failure",
+    "named": false
+  },
+  {
+    "type": "#eval",
+    "named": false
+  },
+  {
+    "type": "#eval!",
+    "named": false
+  },
+  {
+    "type": "#print",
+    "named": false
+  },
+  {
+    "type": "#synth",
+    "named": false
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -1402,7 +1933,15 @@
     "named": false
   },
   {
+    "type": "-",
+    "named": false
+  },
+  {
     "type": "-/",
+    "named": false
+  },
+  {
+    "type": "->",
     "named": false
   },
   {
@@ -1411,6 +1950,14 @@
   },
   {
     "type": ".{",
+    "named": false
+  },
+  {
+    "type": "/-",
+    "named": false
+  },
+  {
+    "type": "/-!",
     "named": false
   },
   {
@@ -1462,7 +2009,15 @@
     "named": false
   },
   {
+    "type": "attribute",
+    "named": false
+  },
+  {
     "type": "axiom",
+    "named": false
+  },
+  {
+    "type": "axioms",
     "named": false
   },
   {
@@ -1478,11 +2033,39 @@
     "named": false
   },
   {
+    "type": "end",
+    "named": false
+  },
+  {
+    "type": "eqns",
+    "named": false
+  },
+  {
+    "type": "equations",
+    "named": false
+  },
+  {
     "type": "example",
     "named": false
   },
   {
+    "type": "exit",
+    "named": true
+  },
+  {
+    "type": "export",
+    "named": false
+  },
+  {
     "type": "extends",
+    "named": false
+  },
+  {
+    "type": "false",
+    "named": false
+  },
+  {
+    "type": "hiding",
     "named": false
   },
   {
@@ -1494,6 +2077,10 @@
     "named": false
   },
   {
+    "type": "init_quot",
+    "named": true
+  },
+  {
     "type": "instance",
     "named": false
   },
@@ -1503,6 +2090,14 @@
   },
   {
     "type": "local",
+    "named": false
+  },
+  {
+    "type": "namespace",
+    "named": false
+  },
+  {
+    "type": "noncomputable",
     "named": false
   },
   {
@@ -1518,6 +2113,10 @@
     "named": false
   },
   {
+    "type": "open",
+    "named": false
+  },
+  {
     "type": "partial",
     "named": false
   },
@@ -1526,7 +2125,19 @@
     "named": false
   },
   {
+    "type": "renaming",
+    "named": false
+  },
+  {
     "type": "scoped",
+    "named": false
+  },
+  {
+    "type": "section",
+    "named": false
+  },
+  {
+    "type": "set_option",
     "named": false
   },
   {
@@ -1538,7 +2149,19 @@
     "named": false
   },
   {
+    "type": "tactic",
+    "named": false
+  },
+  {
+    "type": "tags",
+    "named": false
+  },
+  {
     "type": "theorem",
+    "named": false
+  },
+  {
+    "type": "true",
     "named": false
   },
   {
@@ -1546,12 +2169,28 @@
     "named": false
   },
   {
+    "type": "universe",
+    "named": false
+  },
+  {
     "type": "unsafe",
     "named": false
   },
   {
+    "type": "variable",
+    "named": false
+  },
+  {
+    "type": "version",
+    "named": true
+  },
+  {
     "type": "where",
     "named": false
+  },
+  {
+    "type": "where",
+    "named": true
   },
   {
     "type": "with",
@@ -1587,6 +2226,10 @@
   },
   {
     "type": "»",
+    "named": false
+  },
+  {
+    "type": "→",
     "named": false
   },
   {

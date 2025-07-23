@@ -7,17 +7,10 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { sepBy1 } from "./term.js";
+import { oneOf, sepBy1 } from "./util.js";
 
-const declSig = $ => seq(
-  repeat(choice($.binder_ident, $.bracketed_binder)),
-  $.type_spec
-)
-
-const optDeclSig = $ => seq(
-  repeat(choice($.binder_ident, $.bracketed_binder)),
-  optional($.type_spec)
-)
+const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
+const optDeclSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), optional($.type_spec))
 
 const declModifiers = $ => seq(
   optional($.documentation),

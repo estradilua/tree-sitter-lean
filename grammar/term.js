@@ -5,9 +5,10 @@
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
-// @ts-check
 
-export const sepBy1 = (p, sep) => seq(p, repeat(seq(sep, p)))
+import { sepBy1 } from "./util.js"
+
+// @ts-check
 
 const optIdent = $ => optional(seq($.ident, ':'))
 
@@ -26,7 +27,7 @@ export default {
   ),
   hole: $ => '_',
   type_spec: $ => seq(':', $.term),
-  binder_ident: $ => choice(prec(10,$.ident), $.hole),
+  binder_ident: $ => choice(prec(10, $.ident), $.hole),
   explicit_binder: $ => seq('(', repeat1($.binder_ident), optional($.type_spec), ')'),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
