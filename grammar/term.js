@@ -23,7 +23,7 @@ export default {
       /[[_\pL]--λΠΣ][_!?\pL[₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ']*/,
       seq('«', /[^»]/, '»')
     ),
-    optional(seq('.', $.ident))
+    optional(seq(token.immediate('.'), token.immediate($.ident)))
   ),
   hole: $ => '_',
   type_spec: $ => seq(':', $.term),
