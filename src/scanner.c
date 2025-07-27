@@ -9,6 +9,8 @@ enum TokenType {
   RAW_STRING_LITERAL_CONTENT,
   RAW_STRING_LITERAL_END,
 
+  COMMENT_BODY,
+
   PUSH_COL,
   MATCH_ALTS_START,
   MATCH_ALT_START,
@@ -113,6 +115,36 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (valid_symbols[RAW_STRING_LITERAL_END]) {
     lexer->result_symbol = RAW_STRING_LITERAL_END;
     return scan_raw_string_end(scanner, lexer);
+  }
+
+  if (valid_symbols[COMMENT_BODY]) {
+    lexer->result_symbol = COMMENT_BODY;
+    uint8_t nesting = 0;
+    char previous = false;
+    while (!eof(lexer)) {
+      advance(lexer);
+      if (lexer->lookahead == '/') {
+        if (previous == '-') {
+          if (!nesting)
+            return true;
+          nesting--;
+          previous = false;
+        } else {
+          previous = '/';
+        }
+      } else if (lexer->lookahead == '-') {
+        if (previous == '/') {
+          nesting++;
+          previous = false;
+        } else {
+          previous = '-';
+          lexer->mark_end(lexer);
+        }
+      } else {
+        previous = false;
+      }
+    }
+    return true;
   }
 
   bool skipped_newline = false;
