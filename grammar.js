@@ -11,6 +11,7 @@ import cmds from './grammar/command.js';
 import does from './grammar/do.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
+import modu, { header } from './grammar/module.js';
 
 export default grammar({
   name: "lean",
@@ -31,8 +32,12 @@ export default grammar({
   ],
 
   rules: {
-    lean: $ => repeat($.command),
+    module: $ => seq(
+      header($),
+      repeat($.command)
+    ),
 
+    ...modu,
     ...cmds,
     ...does,
     ...lits,
