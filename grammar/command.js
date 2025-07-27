@@ -49,6 +49,9 @@ const commands = {
   attribute: $ => seq('attribute', '[', sepBy1(choice(seq('-', $.ident), $.attr_instance), ','), ']', repeat1($.ident)),
   export: $ => seq('export', $.ident, '(', repeat1($.ident), ')'),
   open: $ => seq('open', oneOf($, open_decls)),
+  mutual: $ => 'mutual',
+  initialize: $ => seq(declModifiers($), choice('initialize', 'builtin_initialize'),
+    optional(seq($.ident, $.type_spec, $.left_arrow)), $.do_seq),
 }
 
 const declarations = {
