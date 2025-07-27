@@ -7,7 +7,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import cmds from './grammar/commands.js';
+import cmds from './grammar/command.js';
+import does from './grammar/do.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
 
@@ -33,6 +34,7 @@ export default grammar({
     lean: $ => repeat($.command),
 
     ...cmds,
+    ...does,
     ...lits,
     ...term,
 

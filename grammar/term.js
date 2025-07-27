@@ -5,12 +5,12 @@
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
 
 import { sepBy1, sepBy1Indent } from "./util.js"
 
-// @ts-check
-
-const optIdent = $ => optional(seq($.ident, ':'))
+export const optIdent = $ => optional(seq($.ident, ':'))
+export const optType = $ => optional($.type_spec)
 
 export default {
   term: $ => prec.right(repeat1(prec(-10, choice(
@@ -22,24 +22,33 @@ export default {
     $.ident,
     /[^\s]/,
   )))),
+
+  // see identFnAux on Basic.lean
   ident: $ => seq(
     choice(
       /[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
       seq('«', /[^»]+/, '»')
     ),
-    optional(seq(token.immediate('.'), token.immediate($.ident)))
+    optional(seq('.', $.ident))
   ),
+
+  // symbols
+  left_arrow: $ => choice('←', '<-'),
   hole: $ => '_',
+  defeq: $ => ':=',
+
   type_spec: $ => seq(':', $.term),
+
+  // binders
   binder_ident: $ => choice(prec(10, $.ident), $.hole),
-  explicit_binder: $ => seq('(', repeat1($.binder_ident), optional($.type_spec), ')'),
+  explicit_binder: $ => seq('(', repeat1($.binder_ident), optType($), ')'),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
     repeat1($.binder_ident),
-    optional($.type_spec),
+    optType($),
     choice('}}', '⦄'),
   ),
-  implicit_binder: $ => seq('{', repeat1($.binder_ident), optional($.type_spec), '}'),
+  implicit_binder: $ => seq('{', repeat1($.binder_ident), optType($), '}'),
   inst_binder: $ => seq('[', optIdent($), $.term, ']'),
   bracketed_binder: $ => choice(
     $.explicit_binder,
@@ -48,17 +57,23 @@ export default {
     $.inst_binder
   ),
 
+  // match_alt
   match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), '=>', $.term),
-
   match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start), $._dedent),
 
+  // match_expr
+  match_expr_pat: $ => seq(optional(seq($.ident, '@')), $.ident, repeat($.binder_ident)),
+
+  // let
+  let_id_binder: $ => choice($.binder_ident, $.bracketed_binder),
   let_id_lhs: $ => seq(
     $.binder_ident,
-    repeat(choice($.binder_ident, $.bracketed_binder)),
-    optional($.type_spec)
+    repeat($.let_id_binder),
+    optType($)
   ),
-  let_id_decl: $ => seq($.let_id_lhs, ':=', $.term),
-  let_pat_decl: $ => seq($.term, optional($.type_spec), ':=', $.term),
+  let_id_decl: $ => seq($.let_id_lhs, $.defeq, $.term),
+  let_id_decl_no_binders: $ => seq($.ident, optType($), $.defeq, $.term),
+  let_pat_decl: $ => prec.right(seq($.term, optType($), $.defeq, $.term)),
   let_eqns_decl: $ => seq($.let_id_lhs, $.match_alts),
   let_decl: $ => choice($.let_id_decl, $.let_pat_decl, $.let_eqns_decl),
   let_rec_decl: $ => seq(
@@ -67,18 +82,29 @@ export default {
     $.let_decl,
     // $.termination_suffix
   ),
+  let_rec_decls: $ => sepBy1($.let_rec_decl, ','),
+
+  // where
   where_decls: $ => seq('where', sepBy1Indent($, $.let_rec_decl, ';')),
 
   struct_inst_field: $ => seq(
     $.ident,
     optional(seq(
       repeat(seq(choice($.binder_ident, $.bracketed_binder))),
-      optional($.type_spec),
-      choice(seq(':=', $.term), $.match_alts)
+      optType($),
+      choice(seq($.defeq, $.term), $.match_alts)
     ))
   ),
 
+  // attribute
   attr_kind: $ => choice('scoped', 'local'),
   attr_instance: $ => seq(optional($.attr_kind), $.term),
   attributes: $ => seq('@[', sepBy1($.attr_instance, ','), ']'),
+
+  // have
+  have_id_decl: $ => seq(have_id_lhs($), $.defeq, $.term),
+  have_eqns_decl: $ => seq(have_id_lhs($), $.match_alts),
+  have_decl: $ => choice($.have_id_decl, $.let_pat_decl, $.have_eqns_decl),
 } 
+
+const have_id_lhs = $ => seq(optional(seq($.binder_ident, repeat($.let_id_binder))), optType($))
