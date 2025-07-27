@@ -22,7 +22,7 @@ const declModifiers = $ => seq(
 )
 
 const commands = {
-  module_doc: $ => seq('/-!', repeat(/[^\s]+/), '-/'),
+  module_doc: $ => seq('/-!', $.comment_body, '-/'),
   declaration: $ => seq(declModifiers($), oneOf($, declarations)),
   deriving: $ => seq('deriving', 'instance', sepBy1($.ident, ','), 'for', sepBy1($.ident, ',')),
   noncomputable_section: $ => seq('noncomputable', 'section', optional($.ident)),
@@ -84,7 +84,7 @@ export default {
   ...open_decls,
   command: $ => oneOf($, commands),
 
-  documentation: $ => seq('/--', repeat(/[^\s]+/), '-/'),
+  documentation: $ => seq('/--', $.comment_body, '-/'),
   visibility: _ => choice(/private\s/, /protected\s/),
   noncomputable: _ => /noncomputable\s/,
 

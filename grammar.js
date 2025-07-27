@@ -18,10 +18,13 @@ export default grammar({
     $._raw_str_start,
     $.raw_str_content,
     $._raw_str_end,
+    $.comment_body,
     $._push_col,
     $._match_alts_start,
     $._match_alt_start,
     $._eq_col_start,
+    $.gt_col_bar,
+    $.gt_col_else,
     $._dedent,
     $.__error_sentinel,
   ],
@@ -33,7 +36,7 @@ export default grammar({
     ...lits,
     ...term,
 
-    comment: $ => seq('/-', repeat(/[^\s]+/), '-/'),
+    comment: $ => seq('/-', $.comment_body, '-/'),
   },
 
   extras: $ => [/[\s\n]+/, $.comment],
