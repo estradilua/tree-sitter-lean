@@ -13,7 +13,10 @@ enum TokenType {
   MATCH_ALTS_START,
   MATCH_ALT_START,
   EQ_COL_START,
+  GT_COL_BAR,
+  GT_COL_ELSE,
   DEDENT,
+
   ERROR_SENTINEL,
 };
 
@@ -86,16 +89,17 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
-  lexer->log(lexer,
-             "valid symbols: start=%d, content=%d, end=%d, push_col=%d, "
-             "alts_start=%d, alt_start=%d, eq_col_start=%d, dedent=%d, "
-             "error_sentinel=%d",
-             valid_symbols[RAW_STRING_LITERAL_START],
-             valid_symbols[RAW_STRING_LITERAL_CONTENT],
-             valid_symbols[RAW_STRING_LITERAL_END], valid_symbols[PUSH_COL],
-             valid_symbols[MATCH_ALTS_START], valid_symbols[MATCH_ALT_START],
-             valid_symbols[EQ_COL_START], valid_symbols[DEDENT],
-             valid_symbols[ERROR_SENTINEL]);
+  lexer->log(
+      lexer,
+      "valid symbols: start=%d, content=%d, end=%d, push_col=%d, "
+      "alts_start=%d, alt_start=%d, eq_col_start=%d, gt_col_bar=%d, dedent=%d, "
+      "error_sentinel=%d",
+      valid_symbols[RAW_STRING_LITERAL_START],
+      valid_symbols[RAW_STRING_LITERAL_CONTENT],
+      valid_symbols[RAW_STRING_LITERAL_END], valid_symbols[PUSH_COL],
+      valid_symbols[MATCH_ALTS_START], valid_symbols[MATCH_ALT_START],
+      valid_symbols[EQ_COL_START], valid_symbols[GT_COL_BAR],
+      valid_symbols[DEDENT], valid_symbols[ERROR_SENTINEL]);
 
   // eof or error recovery
   if (valid_symbols[ERROR_SENTINEL] || eof(lexer))
@@ -144,6 +148,13 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
+  if (lexer->lookahead == '|' && valid_symbols[GT_COL_BAR] &&
+      scanner->cols.size && indent > *array_back(&scanner->cols)) {
+    advance(lexer);
+    lexer->result_symbol = GT_COL_BAR;
+    return true;
+  }
+
   if (lexer->lookahead == '|' &&
       (valid_symbols[MATCH_ALTS_START] ||
        valid_symbols[MATCH_ALT_START] && scanner->cols.size &&
@@ -175,6 +186,22 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       lexer->result_symbol = MATCH_ALT_START;
       return true;
     }
+  }
+
+  if (lexer->lookahead == 'e' && valid_symbols[GT_COL_ELSE] &&
+      scanner->cols.size && indent > *array_back(&scanner->cols)) {
+    advance(lexer);
+    if (eof(lexer) || lexer->lookahead != 'l')
+      return false;
+    advance(lexer);
+    if (eof(lexer) || lexer->lookahead != 's')
+      return false;
+    advance(lexer);
+    if (eof(lexer) || lexer->lookahead != 'e')
+      return false;
+    advance(lexer);
+    lexer->result_symbol = GT_COL_ELSE;
+    return true;
   }
 
   if (valid_symbols[EQ_COL_START] && skipped_newline && scanner->cols.size &&
