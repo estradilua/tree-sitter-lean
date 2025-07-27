@@ -39,7 +39,8 @@ export default grammar({
     ...term,
 
     comment: $ => seq('/-', $.comment_body, '-/'),
+    line_comment: $ => /--[^\n]*\n/,
   },
 
-  extras: $ => [/[\s\n]+/, $.comment],
+  extras: $ => [/[\s\n]+/, $.comment, $.line_comment],
 });
