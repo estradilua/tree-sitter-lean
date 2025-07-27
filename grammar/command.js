@@ -7,10 +7,11 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { many1Indent, manyIndent, oneOf, sepBy1, sepBy1Indent, sepByIndent } from "./util.js";
+import { optType } from "./term.js";
+import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndent } from "./util.js";
 
 const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
-const optDeclSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), optional($.type_spec))
+const optDeclSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), optType($))
 
 const declModifiers = $ => seq(
   optional($.documentation),
@@ -65,7 +66,7 @@ const declarations = {
   class_inductive: $ => prec.right(seq('class', 'inductive', $.decl_ident, optDeclSig($),
     optional('where'), repeat($.ctor), optional($.deriving))),
   structure: $ => prec.right(seq(choice('structure', 'class'), $.decl_ident,
-    repeat($.bracketed_binder), optional($.type_spec), optional($.extends),
+    repeat($.bracketed_binder), optType($), optional($.extends),
     optional(seq('where', optional($.struct_ctor), optional($.struct_fields))),
     optional($.deriving))),
 }
@@ -98,22 +99,22 @@ export default {
     ))
   ),
 
-  decl_val_simple: $ => seq(':=', $.term, /* $.termination_hints */ optional($.where_decls)),
+  decl_val_simple: $ => seq($.defeq, $.term, /* $.termination_hints */ optional($.where_decls)),
   decl_val_eqns: $ => seq($.match_alts, /* $.termination_hints */ optional($.where_decls)),
   where_struct_inst: $ => seq('where', sepByIndent($, $.struct_inst_field, ';'), optional($.where_decls)),
   decl_val: $ => choice($.decl_val_simple, $.decl_val_eqns, $.where_struct_inst),
   deriving: $ => seq('deriving' /* notFollowedBy 'instance' */, sepBy1($.ident, ',')),
-  named_prio: $ => seq('(', 'priority', ':=', $.num_lit, ')'),
+  named_prio: $ => seq('(', 'priority', $.defeq, $.num_lit, ')'),
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
   computed_fields: $ => prec.right(seq('with', manyIndent($, $.computed_fields))),
-  struct_explicit_binder: $ => seq(declModifiers($), '(', repeat1($.ident), optDeclSig($), optional(seq(':=', $.term)), ')'),
+  struct_explicit_binder: $ => seq(declModifiers($), '(', repeat1($.ident), optDeclSig($), optional(seq($.defeq, $.term)), ')'),
   struct_implicit_binder: $ => seq(declModifiers($), '{', repeat1($.ident), declSig($), '}'),
   struct_inst_binder: $ => seq(declModifiers($), '[', repeat1($.ident), declSig($), ']'),
-  struct_simple_binder: $ => seq(declModifiers($), $.ident, optDeclSig($), optional(seq(':=', $.term))),
+  struct_simple_binder: $ => seq(declModifiers($), $.ident, optDeclSig($), optional(seq($.defeq, $.term))),
   struct_fields: $ => many1Indent($, choice($.struct_explicit_binder,
     $.struct_implicit_binder, $.struct_inst_binder, $.struct_simple_binder)),
   struct_ctor: $ => seq(declModifiers($), $.ident, '::'),
   struct_parent: $ => seq(optional(seq($.ident, ':')), $.term),
-  extends: $ => seq('extends', sepBy1($.struct_parent, ','), optional($.type_spec)),
+  extends: $ => seq('extends', sepBy1($.struct_parent, ','), optType($)),
 }
