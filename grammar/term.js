@@ -20,8 +20,8 @@ export default {
   )))),
   ident: $ => seq(
     choice(
-      /[[_\pL]--λΠΣ][_!?\pL[₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ']*/,
-      seq('«', /[^»]/, '»')
+      /[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
+      seq('«', /[^»]+/, '»')
     ),
     optional(seq(token.immediate('.'), token.immediate($.ident)))
   ),
