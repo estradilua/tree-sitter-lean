@@ -8,7 +8,6 @@
 // @ts-check
 
 const quotable = /[\\"'rnt]/
-const hexDigit = /[0-9a-fA-F]/
 
 export default {
   literal: $ => choice(
@@ -30,8 +29,8 @@ export default {
     choice(
       seq('\\', choice(
         quotable,
-        seq('x', hexDigit, hexDigit),
-        seq('u', hexDigit, hexDigit, hexDigit, hexDigit),
+        seq(/x[a-fA-F\d]{2}/),
+        seq(/u[a-fA-F\d]{4}/),
       )),
       /[^\n]/,
     ),
@@ -42,8 +41,8 @@ export default {
     repeat(choice(
       seq('\\', choice(
         quotable,
-        seq('x', hexDigit, hexDigit),
-        seq('u', hexDigit, hexDigit, hexDigit, hexDigit),
+        seq(/x[a-fA-F\d]{2}/),
+        seq(/u[a-fA-F\d]{4}/),
         '\n'
       )),
       /[^\\"\n]+/,
