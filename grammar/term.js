@@ -14,6 +14,10 @@ const optIdent = $ => optional(seq($.ident, ':'))
 
 export default {
   term: $ => prec.right(repeat1(prec(-10, choice(
+    seq('{', $.term, '}'),
+    seq('(', $.term, ')'),
+    seq('[', $.term, ']'),
+    seq('⟨', $.term, '⟩'),
     $.literal,
     $.ident,
     /[^\s]/,
