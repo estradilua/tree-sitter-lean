@@ -93,7 +93,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
 
   lexer->log(
       lexer,
-      "valid symbols: start=%d, content=%d, end=%d, push_col=%d, "
+      "valid symbols: raw_start=%d, raw_content=%d, raw_end=%d, push_col=%d, "
       "alts_start=%d, alt_start=%d, eq_col_start=%d, gt_col_bar=%d, dedent=%d, "
       "error_sentinel=%d",
       valid_symbols[RAW_STRING_LITERAL_START],
@@ -169,14 +169,15 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (eof(lexer))
     return false;
 
-  if (valid_symbols[RAW_STRING_LITERAL_START] && lexer->lookahead == 'r') {
-    lexer->result_symbol = RAW_STRING_LITERAL_START;
-    return scan_raw_string_start(scanner, lexer);
-  }
-
   if (valid_symbols[PUSH_COL]) {
     lexer->result_symbol = PUSH_COL;
     array_push(&scanner->cols, indent);
+    return true;
+  }
+
+  if (valid_symbols[EQ_COL_START] && skipped_newline && scanner->cols.size &&
+      indent == *array_back(&scanner->cols)) {
+    lexer->result_symbol = EQ_COL_START;
     return true;
   }
 
@@ -236,10 +237,9 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (valid_symbols[EQ_COL_START] && skipped_newline && scanner->cols.size &&
-      indent == *array_back(&scanner->cols)) {
-    lexer->result_symbol = EQ_COL_START;
-    return true;
+  if (valid_symbols[RAW_STRING_LITERAL_START] && lexer->lookahead == 'r') {
+    lexer->result_symbol = RAW_STRING_LITERAL_START;
+    return scan_raw_string_start(scanner, lexer);
   }
 
   return false;
