@@ -46,6 +46,7 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
   advance(lexer);
   scanner->opening_hash_count = opening_hash_count;
 
+  lexer->mark_end(lexer);
   return true;
 }
 
@@ -147,6 +148,9 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
+  // necessary for DEDENT, which must consume nothing
+  lexer->mark_end(lexer);
+
   bool skipped_newline = false;
   while (!eof(lexer)) {
     if (lexer->lookahead == '\n')
@@ -160,8 +164,14 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
 
   lexer->log(lexer, "newline: %d", skipped_newline);
 
+  // it should be possible for many DEDENT tokens to be parsed in quick
+  // succession. this is necessary in order to close multiple indented blocks
+  // which end at the same time. to support this, DEDENT does not consume any
+  // characters, so that it continues generating tokens until all the
+  // extra indentation is removed from the stack.
   if (valid_symbols[DEDENT] && skipped_newline && scanner->cols.size &&
       indent < *array_back(&scanner->cols)) {
+    array_pop(&scanner->cols);
     lexer->result_symbol = DEDENT;
     return true;
   }
@@ -171,6 +181,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
 
   if (valid_symbols[PUSH_COL]) {
     lexer->result_symbol = PUSH_COL;
+    lexer->mark_end(lexer);
     array_push(&scanner->cols, indent);
     return true;
   }
@@ -178,6 +189,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (valid_symbols[EQ_COL_START] && skipped_newline && scanner->cols.size &&
       indent == *array_back(&scanner->cols)) {
     lexer->result_symbol = EQ_COL_START;
+    lexer->mark_end(lexer);
     return true;
   }
 
@@ -185,6 +197,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       scanner->cols.size && indent > *array_back(&scanner->cols)) {
     advance(lexer);
     lexer->result_symbol = GT_COL_BAR;
+    lexer->mark_end(lexer);
     return true;
   }
 
@@ -233,6 +246,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     if (eof(lexer) || lexer->lookahead != 'e')
       return false;
     advance(lexer);
+    lexer->mark_end(lexer);
     lexer->result_symbol = GT_COL_ELSE;
     return true;
   }
