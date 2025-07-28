@@ -179,7 +179,8 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (eof(lexer))
     return false;
 
-  if (valid_symbols[PUSH_COL]) {
+  if (valid_symbols[PUSH_COL] &&
+      (!scanner->cols.size || indent > *array_back(&scanner->cols))) {
     lexer->result_symbol = PUSH_COL;
     lexer->mark_end(lexer);
     array_push(&scanner->cols, indent);
