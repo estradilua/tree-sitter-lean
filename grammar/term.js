@@ -37,6 +37,7 @@ export default {
   left_arrow: $ => choice('←', '<-'),
   hole: $ => '_',
   defeq: $ => ':=',
+  darrow: $ => '=>',
 
   type_spec: $ => seq(':', $.term),
 
@@ -59,7 +60,7 @@ export default {
   ),
 
   // match_alt
-  match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), '=>', $.term),
+  match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), $.darrow, $.term),
   match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start), $._dedent),
 
   // match_expr
