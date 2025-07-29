@@ -40,7 +40,7 @@ export default {
   type_spec: $ => seq(':', $.term),
 
   // binders
-  binder_ident: $ => choice(prec(10, $.ident), $.hole),
+  binder_ident: $ => choice(prec(-20, $.ident), $.hole),
   explicit_binder: $ => seq('(', repeat1($.binder_ident), optType($), ')'),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
