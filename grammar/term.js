@@ -14,10 +14,10 @@ export const optType = $ => optional($.type_spec)
 
 export default {
   term: $ => prec.right(repeat1(prec(-10, choice(
-    seq('{', $.term, '}'),
-    seq('(', $.term, ')'),
-    seq('[', $.term, ']'),
-    seq('⟨', $.term, '⟩'),
+    seq('{', optional($.term), '}'),
+    seq('(', optional($.term), ')'),
+    seq('[', optional($.term), ']'),
+    seq('⟨', optional($.term), '⟩'),
     $.literal,
     $.ident,
     /[^\s]/,
