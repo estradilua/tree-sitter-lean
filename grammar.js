@@ -28,13 +28,15 @@ export default grammar({
     $.gt_col_bar,
     $.gt_col_else,
     $._dedent,
+    $._eof,
     $.__error_sentinel,
   ],
 
   rules: {
     module: $ => seq(
       header($),
-      repeat($.command)
+      repeat($.command),
+      $._eof,
     ),
 
     ...modu,

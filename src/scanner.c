@@ -19,6 +19,7 @@ enum TokenType {
   GT_COL_ELSE,
   DEDENT,
 
+  END_OF_FILE,
   ERROR_SENTINEL,
 };
 
@@ -173,6 +174,12 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       indent < *array_back(&scanner->cols)) {
     array_pop(&scanner->cols);
     lexer->result_symbol = DEDENT;
+    return true;
+  }
+
+  if (eof(lexer) && valid_symbols[END_OF_FILE]) {
+    lexer->result_symbol = END_OF_FILE;
+    lexer->mark_end(lexer);
     return true;
   }
 
