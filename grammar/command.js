@@ -53,6 +53,15 @@ const commands = {
   initialize: $ => seq(declModifiers($), choice(/initialize\s/, /builtin_initialize\s/),
     // HACK: see comment under POP_COL on scanner.c
     optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq),
+  in: $ => prec.right(seq($.command, /\sin\s/, $.command)),
+  add_docstring: $ => seq($.documentation, 'add_decl_doc', $.ident),
+  register_tactic_tag: $ => seq(optional($.documentation), 'register_tactic_tag', $.ident, $.str_lit),
+  tactic_extension: $ => seq(optional($.documentation), 'tactic_extension', $.ident),
+  recommended_spelling: $ => seq(optional($.documentation), 'recommended_spelling', $.str_lit, 'for',
+    $.str_lit, 'in', '[', sepBy1($.ident, ','), ']'),
+  gen_injective_theorems: $ => seq('gen_injective_theorems%', $.ident),
+  include: $ => seq('include', repeat1($.ident)),
+  omit: $ => seq('omit', repeat1(choice($.ident, $.inst_binder))),
 }
 
 const declarations = {
