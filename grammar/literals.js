@@ -29,8 +29,8 @@ export default {
     choice(
       seq('\\', choice(
         quotable,
-        seq(/x[a-fA-F\d]{2}/),
-        seq(/u[a-fA-F\d]{4}/),
+        /x[a-fA-F\d]{2}/,
+        /u[a-fA-F\d]{4}/,
       )),
       /[^\n]/,
     ),
@@ -41,8 +41,8 @@ export default {
     repeat(choice(
       seq('\\', choice(
         quotable,
-        seq(/x[a-fA-F\d]{2}/),
-        seq(/u[a-fA-F\d]{4}/),
+        /x[a-fA-F\d]{2}/,
+        /u[a-fA-F\d]{4}/,
         '\n'
       )),
       /[^\\"\n]+/,
