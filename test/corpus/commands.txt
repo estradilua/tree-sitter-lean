@@ -116,3 +116,96 @@ initialize
                               (term
                                 (literal
                                   (num_lit))))))))))))))))))
+
+================
+inductive vacant
+================
+
+
+inductive Vacant : Type where
+
+---
+
+(module
+  (command
+    (declaration
+      (inductive
+        (decl_ident
+          (ident))
+        (type_spec
+          (term
+            (ident)))))))
+
+==================
+inductive either''
+==================
+
+inductive Either'' : Type u → Type v → Type (max u v + 1) where
+  | left : {α : Type u} → {β : Type v} → α → Either'' α β
+  | right : β → Either'' α β
+
+---
+
+(module
+  (command
+    (declaration
+      (inductive
+        (decl_ident
+          (ident))
+        (type_spec
+          (term
+            (ident)
+            (ident)
+            (ident)
+            (term
+              (ident)
+              (literal
+                (num_lit)))))
+        (ctor
+          (ident)
+          (type_spec
+            (term
+              (term
+                (ident))
+              (term
+                (ident))
+              (ident))))
+        (ctor
+          (ident)
+          (type_spec
+            (term
+              (ident))))))))
+
+==========================
+definition with match_alts
+==========================
+
+def AtLeastOne.head : AtLeastOne α → α
+  | ⟨x, _⟩ => x
+  | .mk x _ => x
+
+---
+
+(module
+  (command
+    (declaration
+      (definition
+        (decl_ident
+          (ident
+            (ident)))
+        (type_spec
+          (term
+            (ident)))
+        (decl_val
+          (decl_val_eqns
+            (match_alts
+              (match_alt
+                (term
+                  (term))
+                (darrow)
+                (term))
+              (match_alt
+                (term
+                  (ident))
+                (darrow)
+                (term)))))))))
