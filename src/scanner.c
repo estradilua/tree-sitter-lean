@@ -12,6 +12,23 @@ enum TokenType {
   COMMENT_BODY,
 
   PUSH_COL,
+
+  // POP_COL is used to disabiguate when PUSH_COL is parsed
+  // but Lean's parser would have tried to parse something else
+  // first. (tree-sitter sees PUSH_COL as a token, when in reality
+  // it just pushes a column onto the stack). The following example
+  // illustrates this well:
+  //
+  // initialize
+  //   foo : Int ← pure 2
+  //
+  // Here, tree-sitter would insert a PUSH_COL token right after the
+  // 'initialize' keyword (because 'initialize [DO_SEQ BLOCK]' is valid)
+  // while it should have been greedy and parsed the 'foo : Int ←' before
+  // PUSH_COL. To fix this, we make PUSH_COL a valid symbol for the named
+  // 'initialize' rule, and then we add a POP_COL token right after it.
+  POP_COL,
+
   MATCH_ALTS_START,
   MATCH_ALT_START,
   EQ_COL_START,
@@ -108,6 +125,12 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   // eof or error recovery
   if (valid_symbols[ERROR_SENTINEL] || eof(lexer))
     return false;
+
+  if (valid_symbols[POP_COL] && scanner->cols.size) {
+    lexer->result_symbol = POP_COL;
+    array_pop(&scanner->cols);
+    return true;
+  }
 
   if (valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
     lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;

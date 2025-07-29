@@ -50,8 +50,9 @@ const commands = {
   export: $ => seq('export', $.ident, '(', repeat1($.ident), ')'),
   open: $ => seq('open', oneOf($, open_decls)),
   mutual: $ => 'mutual',
-  initialize: $ => seq(declModifiers($), choice('initialize', 'builtin_initialize'),
-    optional(seq($.ident, $.type_spec, $.left_arrow)), $.do_seq),
+  initialize: $ => seq(declModifiers($), choice(/initialize\s/, /builtin_initialize\s/),
+    // HACK: see comment under POP_COL on scanner.c
+    optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq),
 }
 
 const declarations = {
