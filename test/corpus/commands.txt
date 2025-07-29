@@ -1,0 +1,118 @@
+======
+syntax
+======
+
+syntax "=>" term:2 : term
+
+---
+
+(module
+  (command
+    (syntax
+      (syntax_p
+        (atom
+          (str_lit)))
+      (syntax_p
+        (cat
+          (ident)
+          (precedence
+            (num_lit))))
+      (ident))))
+
+====================
+initialize ambiguous
+====================
+
+initialize foo : Int ← pure ()
+                       return 2
+
+---
+
+(module
+  (command
+    (initialize
+      (ident)
+      (type_spec
+        (term
+          (ident)))
+      (left_arrow)
+      (do_seq
+        (do_seq_indent
+          (do_seq_item
+            (do_elem
+              (do_expr
+                (term
+                  (ident)))))
+          (do_seq_item
+            (do_elem
+              (do_expr
+                (term
+                  (ident)
+                  (literal
+                    (num_lit)))))))))))
+
+=================
+initialize do_seq
+=================
+
+initialize let foo : Int ← pure ()
+           return 2
+
+---
+
+(module
+  (command
+    (initialize
+      (do_seq
+        (do_seq_indent
+          (do_seq_item
+            (do_elem
+              (do_let_arrow
+                (do_id_decl
+                  (ident)
+                  (type_spec
+                    (term
+                      (ident)))
+                  (left_arrow)
+                  (do_elem
+                    (do_expr
+                      (term
+                        (ident))))))))
+          (do_seq_item
+            (do_elem
+              (do_expr
+                (term
+                  (ident)
+                  (literal
+                    (num_lit)))))))))))
+
+===================================
+nested do_seq blocks ending at once
+===================================
+
+initialize
+  do
+    let a := 1
+
+---
+
+(module
+  (command
+    (initialize
+      (do_seq
+        (do_seq_indent
+          (do_seq_item
+            (do_elem
+              (do_nested
+                (do_seq
+                  (do_seq_indent
+                    (do_seq_item
+                      (do_elem
+                        (do_let
+                          (let_decl
+                            (let_pat_decl
+                              (term)
+                              (defeq)
+                              (term
+                                (literal
+                                  (num_lit))))))))))))))))))
