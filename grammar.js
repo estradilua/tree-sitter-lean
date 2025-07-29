@@ -12,6 +12,7 @@ import does from './grammar/do.js';
 import lits from './grammar/literals.js';
 import term from './grammar/term.js';
 import modu, { header } from './grammar/module.js';
+import sytx from './grammar/syntax.js';
 
 export default grammar({
   name: "lean",
@@ -45,6 +46,7 @@ export default grammar({
     ...does,
     ...lits,
     ...term,
+    ...sytx,
 
     comment: $ => seq('/-', $.comment_body, '-/'),
     line_comment: $ => /--[^\n]*\n/,

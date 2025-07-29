@@ -11,6 +11,7 @@ import { sepBy1, sepBy1Indent } from "./util.js"
 
 export const optIdent = $ => optional(seq($.ident, ':'))
 export const optType = $ => optional($.type_spec)
+export const attrKind = $ => optional(alias(choice('scoped', 'local'), $.attr_kind))
 
 export default {
   term: $ => prec.right(repeat1(prec(-10, choice(
@@ -97,8 +98,7 @@ export default {
   ),
 
   // attribute
-  attr_kind: $ => choice('scoped', 'local'),
-  attr_instance: $ => seq(optional($.attr_kind), $.term),
+  attr_instance: $ => seq(attrKind($), $.term),
   attributes: $ => seq('@[', sepBy1($.attr_instance, ','), ']'),
 
   // have

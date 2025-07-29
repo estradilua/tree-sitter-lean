@@ -7,7 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { optType } from "./term.js";
+import { attrKind, optType } from "./term.js";
 import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndent } from "./util.js";
 
 const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
@@ -62,6 +62,18 @@ const commands = {
   gen_injective_theorems: $ => seq('gen_injective_theorems%', $.ident),
   include: $ => seq('include', repeat1($.ident)),
   omit: $ => seq('omit', repeat1(choice($.ident, $.inst_binder))),
+
+  // Syntax.lean
+  mixfix: $ => seq(optional($.documentation), optional($.attributes), attrKind($), $.mixfix_kind,
+    $.precedence, optional($.named_name), optional($.named_prio), $.str_lit, $.darrow, $.term),
+  notation: $ => seq(optional($.documentation), optional($.attributes), attrKind($), 'notation',
+    optional($.precedence), optional($.named_name), optional($.named_prio), repeat($.notation_item),
+    $.darrow, $.term),
+  macro_rules: $ => seq(optional($.documentation), optional($.attributes), attrKind($), 'macro_rules',
+    optional($.kind), $.match_alts),
+  syntax: $ => seq(optional($.documentation), optional($.attributes), attrKind($), /syntax\s/,
+    optional($.precedence), optional($.named_name), optional($.named_prio), repeat1($.syntax_p), ':',
+    $.ident),
 }
 
 const declarations = {
@@ -69,7 +81,7 @@ const declarations = {
   definition: $ => prec.right(seq('def', $.decl_ident, optDeclSig($), $.decl_val, optional($.deriving))),
   theorem: $ => seq(choice('theorem', 'lemma'), $.decl_ident, declSig($), $.decl_val),
   opaque: $ => seq('opaque', $.decl_ident, declSig($), $.decl_val_simple),
-  instance: $ => seq(optional($.attr_kind), 'instance', optional($.named_prio),
+  instance: $ => seq(attrKind($), 'instance', optional($.named_prio),
     optional($.decl_ident), declSig($), $.decl_val),
   axiom: $ => seq('axiom', $.decl_ident, declSig($)),
   example: $ => seq('example', optDeclSig($), $.decl_val),
@@ -130,4 +142,10 @@ export default {
   struct_ctor: $ => seq(declModifiers($), $.ident, '::'),
   struct_parent: $ => seq(optional(seq($.ident, ':')), $.term),
   extends: $ => seq('extends', sepBy1($.struct_parent, ','), optType($)),
+
+  // Syntax.lean
+  mixfix_kind: $ => choice('prefix', 'infix', 'infixl', 'infixr', 'postfix'),
+  named_name: $ => seq('(', 'name', $.defeq, $.ident, ')'),
+  notation_item: $ => choice($.str_lit, seq($.ident, optional($.precedence))),
+  kind: $ => seq('(', 'kind', $.defeq, $.ident, ')'),
 }
