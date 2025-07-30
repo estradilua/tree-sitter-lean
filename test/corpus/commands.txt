@@ -209,3 +209,23 @@ def AtLeastOne.head : AtLeastOne α → α
                   (ident))
                 (darrow)
                 (term)))))))))
+
+==============
+non-identifier
+:error
+==============
+
+import Lean.Parser. Command
+
+---
+
+================
+non-identifier 2
+:error
+================
+
+import Lean .Parser.Command
+
+---
+
+
