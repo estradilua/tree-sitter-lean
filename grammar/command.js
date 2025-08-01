@@ -78,7 +78,7 @@ const commands = {
 
 const declarations = {
   abbrev: $ => seq('abbrev', $.decl_ident, optDeclSig($), $.decl_val),
-  definition: $ => prec.right(seq('def', $.decl_ident, optDeclSig($), $.decl_val, optional($.deriving))),
+  definition: $ => prec.right(seq('def', $.decl_ident, optDeclSig($), $.decl_val, optional($.decl_deriving))),
   theorem: $ => seq(choice('theorem', 'lemma'), $.decl_ident, declSig($), $.decl_val),
   opaque: $ => seq('opaque', $.decl_ident, declSig($), $.decl_val_simple),
   instance: $ => seq(attrKind($), 'instance', optional($.named_prio),
@@ -87,13 +87,13 @@ const declarations = {
   example: $ => seq('example', optDeclSig($), $.decl_val),
   inductive: $ => prec.right(seq('inductive', $.decl_ident, optDeclSig($),
     optional('where'), repeat($.ctor), optional($.computed_fields),
-    optional($.deriving))),
+    optional($.decl_deriving))),
   class_inductive: $ => prec.right(seq('class', 'inductive', $.decl_ident, optDeclSig($),
-    optional('where'), repeat($.ctor), optional($.deriving))),
+    optional('where'), repeat($.ctor), optional($.decl_deriving))),
   structure: $ => prec.right(seq(choice('structure', 'class'), $.decl_ident,
     repeat($.bracketed_binder), optType($), optional($.extends),
     optional(seq('where', optional($.struct_ctor), optional($.struct_fields))),
-    optional($.deriving))),
+    optional($.decl_deriving))),
 }
 
 const open_decls = {
@@ -128,7 +128,7 @@ export default {
   decl_val_eqns: $ => seq($.match_alts, /* $.termination_hints */ optional($.where_decls)),
   where_struct_inst: $ => seq('where', sepByIndent($, $.struct_inst_field, ';'), optional($.where_decls)),
   decl_val: $ => choice($.decl_val_simple, $.decl_val_eqns, $.where_struct_inst),
-  deriving: $ => seq('deriving' /* notFollowedBy 'instance' */, sepBy1($.ident, ',')),
+  decl_deriving: $ => seq('deriving' /* notFollowedBy 'instance' */, sepBy1($.ident, ',')),
   named_prio: $ => seq('(', 'priority', $.defeq, $.num_lit, ')'),
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
