@@ -7,7 +7,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-export const sepBy1 = (p, sep) => seq(p, repeat(seq(sep, p)))
+export const sepBy1 = (p, sep, trailing = false) => trailing ?
+  seq(p, repeat(seq(sep, p))) : seq(p, repeat(seq(sep, p)), optional(sep))
 
 export const sepBy1Indent = ($, p, sep, trailing = false) => trailing ?
   seq(
