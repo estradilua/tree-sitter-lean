@@ -106,6 +106,11 @@ export default {
   have_id_decl: $ => seq(have_id_lhs($), $.defeq, $.term),
   have_eqns_decl: $ => seq(have_id_lhs($), $.match_alts),
   have_decl: $ => choice($.have_id_decl, $.let_pat_decl, $.have_eqns_decl),
-} 
+
+  // match
+  generalizing_param: $ => seq('(', 'generalizing', $.defeq, choice($.true_val, $.false_val), ')'),
+  motive: $ => seq('(', 'motive', $.defeq, $.term, ')'),
+  match_discr: $ => seq(optional(seq($.binder_ident, ':')), $.term),
+}
 
 const have_id_lhs = $ => seq(optional(seq($.binder_ident, repeat($.let_id_binder))), optType($))
