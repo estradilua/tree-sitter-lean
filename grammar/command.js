@@ -8,7 +8,7 @@
 // @ts-check
 
 import { attrKind, optType } from "./term.js";
-import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndent } from "./util.js";
+import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndentSemicolon } from "./util.js";
 
 const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
 const optDeclSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), optType($))
@@ -126,7 +126,7 @@ export default {
 
   decl_val_simple: $ => seq($.defeq, $.term, /* $.termination_hints */ optional($.where_decls)),
   decl_val_eqns: $ => seq($.match_alts, /* $.termination_hints */ optional($.where_decls)),
-  where_struct_inst: $ => seq('where', sepByIndent($, $.struct_inst_field, ';'), optional($.where_decls)),
+  where_struct_inst: $ => seq('where', sepByIndentSemicolon($, $.struct_inst_field), optional($.where_decls)),
   decl_val: $ => choice($.decl_val_simple, $.decl_val_eqns, $.where_struct_inst),
   decl_deriving: $ => seq('deriving' /* notFollowedBy 'instance' */, sepBy1($.ident, ',')),
   named_prio: $ => seq('(', 'priority', $.defeq, $.num_lit, ')'),

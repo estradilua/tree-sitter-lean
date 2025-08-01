@@ -7,7 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { sepBy1, sepBy1Indent } from "./util.js"
+import { sepBy1, sepBy1IndentSemicolon } from "./util.js"
 
 export const optIdent = $ => optional(seq($.ident, ':'))
 export const optType = $ => optional($.type_spec)
@@ -87,7 +87,7 @@ export default {
   let_rec_decls: $ => sepBy1($.let_rec_decl, ','),
 
   // where
-  where_decls: $ => seq('where', sepBy1Indent($, $.let_rec_decl, ';')),
+  where_decls: $ => seq('where', sepBy1IndentSemicolon($, $.let_rec_decl)),
 
   struct_inst_field: $ => seq(
     $.ident,
