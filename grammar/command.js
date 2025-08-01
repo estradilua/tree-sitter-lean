@@ -7,7 +7,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { attrKind, optType } from "./term.js";
+import { attrKind } from "./attr.js";
+import { bracketedBinder, optType } from "./term.js";
 import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndentSemicolon } from "./util.js";
 
 const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)

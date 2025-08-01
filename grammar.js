@@ -15,6 +15,7 @@ import modu, { header } from './grammar/module.js';
 import sytx from './grammar/syntax.js';
 import lvls from './grammar/level.js';
 import tcts from './grammar/tactic.js';
+import attr from './grammar/attr.js';
 
 export default grammar({
   name: "lean",
@@ -51,6 +52,7 @@ export default grammar({
     ...sytx,
     ...lvls,
     ...tcts,
+    ...attr,
 
     comment: $ => seq('/-', $.comment_body, '-/'),
     line_comment: $ => /--[^\n]*\n/,
