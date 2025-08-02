@@ -69,9 +69,6 @@ static inline bool scan_raw_string_start(Scanner *scanner, TSLexer *lexer) {
 }
 
 static inline bool scan_raw_string_content(Scanner *scanner, TSLexer *lexer) {
-  if (scanner->opening_hash_count == 0) {
-    return false;
-  }
   for (;;) {
     if (eof(lexer)) {
       return false;
@@ -123,26 +120,25 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       valid_symbols[DEDENT], valid_symbols[ERROR_SENTINEL]);
 
   // eof or error recovery
-  if (valid_symbols[ERROR_SENTINEL] || eof(lexer))
-    return false;
+  bool exceptional = valid_symbols[ERROR_SENTINEL] || eof(lexer);
 
-  if (valid_symbols[POP_COL] && scanner->cols.size) {
+  if (!exceptional && valid_symbols[POP_COL] && scanner->cols.size) {
     lexer->result_symbol = POP_COL;
     array_pop(&scanner->cols);
     return true;
   }
 
-  if (valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
+  if (scanner->opening_hash_count && valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
     lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;
     return scan_raw_string_content(scanner, lexer);
   }
 
-  if (valid_symbols[RAW_STRING_LITERAL_END]) {
+  if (scanner->opening_hash_count && valid_symbols[RAW_STRING_LITERAL_END]) {
     lexer->result_symbol = RAW_STRING_LITERAL_END;
     return scan_raw_string_end(scanner, lexer);
   }
 
-  if (valid_symbols[COMMENT_BODY]) {
+  if (!exceptional && valid_symbols[COMMENT_BODY]) {
     lexer->result_symbol = COMMENT_BODY;
     uint8_t nesting = 0;
     char previous = false;
@@ -206,7 +202,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (eof(lexer))
+  if (exceptional || eof(lexer))
     return false;
 
   if (valid_symbols[PUSH_COL] &&
