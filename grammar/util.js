@@ -10,6 +10,8 @@
 export const sepBy1 = (p, sep, trailing = false) => trailing ?
   seq(p, repeat(seq(sep, p))) : seq(p, repeat(seq(sep, p)), optional(sep))
 
+export const sepBy = (p, sep, trailing = false) => optional(sepBy1(p, sep, trailing))
+
 export const sepBy1Indent = ($, p, sep, trailing = false) => trailing ?
   seq(
     $._push_col,
