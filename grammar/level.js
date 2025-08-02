@@ -11,16 +11,16 @@ import { oneOf } from "./util.js"
 // @ts-check
 
 const levels = {
-  level_paren: $ => seq('(', $.level_p, ')'),
-  level_max: $ => seq('max', repeat1($.level_p)),
-  level_imax: $ => seq('imax', repeat1($.level_p)),
-  level_hole: $ => _,
+  level_paren: $ => seq('(', $._level, ')'),
+  level_max: $ => prec.right(seq('max', repeat1($._level))),
+  level_imax: $ => prec.right(seq('imax', repeat1($._level))),
+  level_hole: $ => '_',
   level_num: $ => $.num_lit,
   level_ident: $ => $.ident,
-  level_add_lit: $ => seq($.level_p, '+', $.num_lit),
+  level_add_lit: $ => prec(-10, seq($._level, '+', $.num_lit)),
 }
 
 export default {
   ...levels,
-  level_p: $ => oneOf($, levels),
+  _level: $ => oneOf($, levels),
 }
