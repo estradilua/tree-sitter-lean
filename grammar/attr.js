@@ -12,6 +12,8 @@ import { oneOf, sepBy1 } from "./util.js"
 export const attrKind = $ => optional(alias(choice('scoped', 'local'), $.attr_kind))
 
 const attrs = {
+  attr_simple: $ => seq($.ident, optional($.term)),
+  attr_extern: $ => seq('extern', optional($.num_lit), repeat($.extern_entry)),
 }
 
 export default {
@@ -19,4 +21,5 @@ export default {
   attr_p: $ => oneOf($, attrs),
   attr_instance: $ => seq(attrKind($), $.attr_p),
   attributes: $ => seq('@[', sepBy1($.attr_instance, ','), ']'),
+  extern_entry: $ => seq(optional($.ident), optional('inline'), $.str_lit)
 }
