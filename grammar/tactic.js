@@ -6,7 +6,7 @@
 
 /// <reference types="tree-sitter-cli/dsl" />
 
-import { oneOf, sepBy1IndentSemicolon, sepByIndentSemicolon } from "./util.js"
+import { oneOf, sepBy1, sepBy1IndentSemicolon, sepByIndentSemicolon } from "./util.js"
 
 // @ts-check
 
@@ -27,6 +27,6 @@ export default {
   tactic_p: $ => oneOf($, tactics),
 
   tactic_seq_indented: $ => sepBy1IndentSemicolon($, $.tactic_p),
-  tactic_seq_bracketed: $ => seq('{', sepByIndentSemicolon($.tactic_p), '}'),
+  tactic_seq_bracketed: $ => seq('{', sepByIndentSemicolon($, $.tactic_p), '}'),
   tactic_seq: $ => choice($.tactic_seq_indented, $.tactic_seq_bracketed),
 }
