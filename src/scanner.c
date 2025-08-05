@@ -36,6 +36,9 @@ enum TokenType {
   GT_COL_ELSE,
   DEDENT,
 
+  PAREN_OPEN,
+  PAREN_CLOSE,
+
   END_OF_FILE,
   ERROR_SENTINEL,
 };
@@ -44,6 +47,9 @@ typedef struct {
   uint8_t opening_hash_count;
   Array(uint8_t) cols;
 } Scanner;
+
+// we use this to indicate parenthesis enclosures, simulating 'withoutPosition'
+#define PAREN 0
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
@@ -128,7 +134,8 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (scanner->opening_hash_count && valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
+  if (scanner->opening_hash_count &&
+      valid_symbols[RAW_STRING_LITERAL_CONTENT]) {
     lexer->result_symbol = RAW_STRING_LITERAL_CONTENT;
     return scan_raw_string_content(scanner, lexer);
   }
@@ -205,6 +212,13 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (exceptional || eof(lexer))
     return false;
 
+  if (valid_symbols[DEDENT] && lexer->lookahead == ')' && scanner->cols.size &&
+      *array_back(&scanner->cols) != PAREN) {
+    array_pop(&scanner->cols);
+    lexer->result_symbol = DEDENT;
+    return true;
+  }
+
   if (valid_symbols[PUSH_COL] &&
       (!scanner->cols.size || indent > *array_back(&scanner->cols))) {
     lexer->result_symbol = PUSH_COL;
@@ -225,6 +239,23 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     advance(lexer);
     lexer->result_symbol = GT_COL_BAR;
     lexer->mark_end(lexer);
+    return true;
+  }
+
+  if (lexer->lookahead == '(' && valid_symbols[PAREN_OPEN]) {
+    advance(lexer);
+    lexer->result_symbol = PAREN_OPEN;
+    lexer->mark_end(lexer);
+    array_push(&scanner->cols, PAREN);
+    return true;
+  }
+
+  if (lexer->lookahead == ')' && scanner->cols.size &&
+      *array_back(&scanner->cols) == PAREN && valid_symbols[PAREN_CLOSE]) {
+    advance(lexer);
+    lexer->result_symbol = PAREN_CLOSE;
+    lexer->mark_end(lexer);
+    array_pop(&scanner->cols);
     return true;
   }
 
