@@ -372,3 +372,56 @@ example : True := by
                     (tactic_p
                       (tactic_other
                         (ident)))))))))))))
+
+=============================
+silly parenthesis indentation
+=============================
+
+example : True := by
+  exact (by
+  have := trivial
+  trivial)
+  done
+
+---
+
+(module
+  (command
+    (cmd_declaration
+      (example
+        (type_spec
+          (term
+            (term_ident
+              (ident))))
+        (decl_val
+          (decl_val_simple
+            (defeq)
+            (term
+              (term_by
+                (tactic_seq
+                  (tactic_seq_indented
+                    (tactic_p
+                      (tactic_other
+                        (ident)
+                        (term
+                          (term_paren
+                            (paren_open)
+                            (term
+                              (term_by
+                                (tactic_seq
+                                  (tactic_seq_indented
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)
+                                        (term
+                                          (term_other)
+                                          (term_other)
+                                          (term_ident
+                                            (ident)))))
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)))))))
+                            (paren_close)))))
+                    (tactic_p
+                      (tactic_other
+                        (ident)))))))))))))
