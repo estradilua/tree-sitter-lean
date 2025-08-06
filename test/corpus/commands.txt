@@ -8,7 +8,7 @@ syntax "=>" term:2 : term
 
 (module
   (command
-    (syntax
+    (cmd_syntax
       (syntax_p
         (atom
           (str_lit)))
@@ -30,11 +30,12 @@ initialize foo : Int ← pure ()
 
 (module
   (command
-    (initialize
+    (cmd_initialize
       (ident)
       (type_spec
         (term
-          (ident)))
+          (term_ident
+            (ident))))
       (left_arrow)
       (do_seq
         (do_seq_indent
@@ -42,13 +43,18 @@ initialize foo : Int ← pure ()
             (do_elem
               (do_expr
                 (term
-                  (ident)))))
+                  (term_ident
+                    (ident))
+                  (term_tuple
+                    (paren_open)
+                    (paren_close))))))
           (do_seq_item
             (do_elem
               (do_expr
                 (term
-                  (ident)
-                  (literal
+                  (term_ident
+                    (ident))
+                  (term_num
                     (num_lit)))))))))))
 
 =================
@@ -62,7 +68,7 @@ initialize let foo : Int ← pure ()
 
 (module
   (command
-    (initialize
+    (cmd_initialize
       (do_seq
         (do_seq_indent
           (do_seq_item
@@ -72,18 +78,24 @@ initialize let foo : Int ← pure ()
                   (ident)
                   (type_spec
                     (term
-                      (ident)))
+                      (term_ident
+                        (ident))))
                   (left_arrow)
                   (do_elem
                     (do_expr
                       (term
-                        (ident))))))))
+                        (term_ident
+                          (ident))
+                        (term_tuple
+                          (paren_open)
+                          (paren_close)))))))))
           (do_seq_item
             (do_elem
               (do_expr
                 (term
-                  (ident)
-                  (literal
+                  (term_ident
+                    (ident))
+                  (term_num
                     (num_lit)))))))))))
 
 ===================================
@@ -98,7 +110,7 @@ initialize
 
 (module
   (command
-    (initialize
+    (cmd_initialize
       (do_seq
         (do_seq_indent
           (do_seq_item
@@ -111,10 +123,12 @@ initialize
                         (do_let
                           (let_decl
                             (let_pat_decl
-                              (term)
+                              (term
+                                (term_ident
+                                  (ident)))
                               (defeq)
                               (term
-                                (literal
+                                (term_num
                                   (num_lit))))))))))))))))))
 
 ================
@@ -128,13 +142,13 @@ inductive Vacant : Type where
 
 (module
   (command
-    (declaration
+    (cmd_declaration
       (inductive
         (decl_ident
           (ident))
         (type_spec
           (term
-            (ident)))))))
+            (term_type)))))))
 
 ==================
 inductive either''
@@ -148,33 +162,88 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
 
 (module
   (command
-    (declaration
+    (cmd_declaration
       (inductive
         (decl_ident
           (ident))
         (type_spec
           (term
-            (ident)
-            (ident)
-            (ident)
-            (term
-              (ident)
-              (literal
-                (num_lit)))))
+            (term_type
+              (level_ident
+                (ident)))
+            (term_arrow
+              (right_arrow))
+            (term_type
+              (level_ident
+                (ident)))
+            (term_arrow
+              (right_arrow))
+            (term_type)
+            (term_paren
+              (paren_open)
+              (term
+                (term_ident
+                  (ident))
+                (term_ident
+                  (ident))
+                (term_ident
+                  (ident))
+                (term_other)
+                (term_num
+                  (num_lit)))
+              (paren_close))))
         (ctor
           (ident)
           (type_spec
             (term
-              (term
-                (ident))
-              (term
-                (ident))
-              (ident))))
+              (term_dep_arrow
+                (bracketed_binder
+                  (implicit_binder
+                    (binder_ident
+                      (ident))
+                    (type_spec
+                      (term
+                        (term_type
+                          (level_ident
+                            (ident)))))))
+                (right_arrow)
+                (term
+                  (term_dep_arrow
+                    (bracketed_binder
+                      (implicit_binder
+                        (binder_ident
+                          (ident))
+                        (type_spec
+                          (term
+                            (term_type
+                              (level_ident
+                                (ident)))))))
+                    (right_arrow)
+                    (term
+                      (term_ident
+                        (ident))
+                      (term_arrow
+                        (right_arrow))
+                      (term_ident
+                        (ident))
+                      (term_ident
+                        (ident))
+                      (term_ident
+                        (ident)))))))))
         (ctor
           (ident)
           (type_spec
             (term
-              (ident))))))))
+              (term_ident
+                (ident))
+              (term_arrow
+                (right_arrow))
+              (term_ident
+                (ident))
+              (term_ident
+                (ident))
+              (term_ident
+                (ident)))))))))
 
 ==========================
 definition with match_alts
@@ -188,27 +257,47 @@ def AtLeastOne.head : AtLeastOne α → α
 
 (module
   (command
-    (declaration
+    (cmd_declaration
       (definition
         (decl_ident
-          (ident
-            (ident)))
+          (ident))
         (type_spec
           (term
-            (ident)))
+            (term_ident
+              (ident))
+            (term_ident
+              (ident))
+            (term_arrow
+              (right_arrow))
+            (term_ident
+              (ident))))
         (decl_val
           (decl_val_eqns
             (match_alts
               (match_alt
                 (term
-                  (term))
+                  (term_anonymous_ctor
+                    (term
+                      (term_ident
+                        (ident)))
+                    (term
+                      (term_hole))))
                 (darrow)
-                (term))
+                (term
+                  (term_ident
+                    (ident))))
               (match_alt
                 (term
-                  (ident))
+                  (term_cdot)
+                  (term_ident
+                    (ident))
+                  (term_ident
+                    (ident))
+                  (term_hole))
                 (darrow)
-                (term)))))))))
+                (term
+                  (term_ident
+                    (ident)))))))))))
 
 ==============
 non-identifier
@@ -218,6 +307,8 @@ non-identifier
 import Lean.Parser. Command
 
 ---
+
+
 
 ================
 non-identifier 2
@@ -229,3 +320,55 @@ import Lean .Parser.Command
 ---
 
 
+
+=======================
+"by" inside parentheses
+=======================
+
+example : True := by
+  exact (by have := trivial
+            trivial)
+  done
+
+---
+
+(module
+  (command
+    (cmd_declaration
+      (example
+        (type_spec
+          (term
+            (term_ident
+              (ident))))
+        (decl_val
+          (decl_val_simple
+            (defeq)
+            (term
+              (term_by
+                (tactic_seq
+                  (tactic_seq_indented
+                    (tactic_p
+                      (tactic_other
+                        (ident)
+                        (term
+                          (term_paren
+                            (paren_open)
+                            (term
+                              (term_by
+                                (tactic_seq
+                                  (tactic_seq_indented
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)
+                                        (term
+                                          (term_other)
+                                          (term_other)
+                                          (term_ident
+                                            (ident)))))
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)))))))
+                            (paren_close)))))
+                    (tactic_p
+                      (tactic_other
+                        (ident)))))))))))))
