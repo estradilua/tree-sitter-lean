@@ -7,22 +7,65 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { sepBy1, sepBy1IndentSemicolon } from "./util.js"
+import { attrKind } from "./attr.js"
+import { oneOf, sepBy, sepBy1, sepBy1IndentSemicolon, sepByIndent } from "./util.js"
 
 export const optIdent = $ => optional(seq($.ident, ':'))
-export const optType = $ => optional($.type_spec)
-export const attrKind = $ => optional(alias(choice('scoped', 'local'), $.attr_kind))
+export const optType = ($, requireType = false) => requireType ? $.type_spec : optional($.type_spec)
+
+const terms = {
+  term_by: $ => seq('by', $.tactic_seq),
+  term_ident: $ => prec(-10, $.ident),
+  term_num: $ => $.num_lit,
+  term_str: $ => $.str_lit,
+  term_raw_str: $ => $.raw_str_lit,
+  term_char: $ => $.char_lit,
+  term_type: $ => prec.right(seq('Type', optional($._level))),
+  term_sort: $ => prec.right(seq('Sort', optional($._level))),
+  term_type_star: $ => 'Type*',
+  term_prop: $ => 'Prop',
+  term_hole: $ => '_',
+  term_synthetic_hole: $ => seq('?', choice($.ident, '_')),
+  term_sorry: $ => 'sorry',
+  term_cdot: $ => choice('·', '.'),
+  term_type_ascription: $ => seq($.paren_open, seq($.term, ':', optional($.term)), $.paren_close),
+  term_tuple: $ => seq($.paren_open, optional(seq($.term, ',', sepBy1($.term, ',', true))),
+    $.paren_close),
+  term_paren: $ => seq($.paren_open, $.term, $.paren_close),
+  term_anonymous_ctor: $ => seq('⟨', sepBy($.term, ',', true), '⟩'),
+  // term_suffices: $ => prec.left(seq('suffices', $.suffices_decl, ';', $.term)),
+  // term_show: $ => seq('show', $.term, $.show_rhs),
+  // term_explicit: $ => prec(10, seq('@', $.term)),
+  // term_inaccessible: $ => seq('.(', $.term, ')'),
+  term_dep_arrow: $ => prec.right(seq($.bracketed_binder, $.right_arrow, $.term)),
+  term_arrow: $ => $.right_arrow,
+  // term_forall: $ => seq($.forall, repeat1($.let_id_binder), optType($), ',', $.term),
+  // term_match: $ => seq('match', optional($.generalizing_param), optional($.motive), sepBy1($.match_discr, ','), 'with', $.match_alts),
+  // term_nomatch: $ => prec.right(seq('nomatch', sepBy1($.term, ','))),
+  // term_nofun: $ => 'nofun',
+  // term_struct_inst: $ => seq('{', optional(seq(sepBy1($.term, ','), 'with')),
+  //   sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
+  // term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
+
+  // Notation.lean
+  term_list: $ => prec(-10, seq('[', sepBy($.term, ',', true), ']')),
+
+  term_other: $ => /[^\s[[_\pL]--λΠΣ]]/,
+  // _term_app: $ => prec.left(-10, seq($.term, choice($.named_argument, $.ellipsis, $.term))),
+}
 
 export default {
-  term: $ => prec.right(repeat1(prec(-10, choice(
-    seq('{', optional($.term), '}'),
-    seq('(', optional($.term), ')'),
-    seq('[', optional($.term), ']'),
-    seq('⟨', optional($.term), '⟩'),
-    $.literal,
-    $.ident,
-    /[^\s]/,
-  )))),
+  ...terms,
+  term: $ => prec.right(repeat1(prec(-10, oneOf($, terms)))),
+  //   prec.right(repeat1(prec(-10, choice(
+  //   seq('{', optional($.term), '}'),
+  //   seq('(', optional($.term), ')'),
+  //   seq('[', optional($.term), ']'),
+  //   seq('⟨', optional($.term), '⟩'),
+  //   $.literal,
+  //   $.ident,
+  //   /[^\s]/,
+  // )))),
 
   // see identFnAux on Basic.lean
   ident: $ => seq(
@@ -35,15 +78,21 @@ export default {
 
   // symbols
   left_arrow: $ => choice('←', '<-'),
-  hole: $ => '_',
+  right_arrow: $ => choice('→', '->'),
+  forall: $ => choice('∀', 'forall'),
   defeq: $ => ':=',
   darrow: $ => '=>',
+  fun_arrow: $ => choice('↦', '=>'),
+  true_val: $ => 'true',
+  false_val: $ => 'false',
+  ellipsis: $ => '..',
+  lambda: $ => choice('λ', 'fun'),
 
   type_spec: $ => seq(':', $.term),
 
   // binders
-  binder_ident: $ => choice(prec(-20, $.ident), $.hole),
-  explicit_binder: $ => seq('(', repeat1($.binder_ident), optType($), ')'),
+  binder_ident: $ => choice(prec(-20, $.ident), $.term_hole),
+  explicit_binder: $ => seq($.paren_open, repeat1($.binder_ident), optType($), $.paren_close),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
     repeat1($.binder_ident),
@@ -84,7 +133,7 @@ export default {
     $.let_decl,
     // $.termination_suffix
   ),
-  let_rec_decls: $ => sepBy1($.let_rec_decl, ','),
+  let_rec_decls: $ => prec.right(sepBy1($.let_rec_decl, ',')),
 
   // where
   where_decls: $ => seq('where', sepBy1IndentSemicolon($, $.let_rec_decl)),
@@ -92,15 +141,11 @@ export default {
   struct_inst_field: $ => seq(
     $.ident,
     optional(seq(
-      repeat(seq(choice($.binder_ident, $.bracketed_binder))),
+      repeat(seq($.let_id_binder)),
       optType($),
       choice(seq($.defeq, $.term), $.match_alts)
     ))
   ),
-
-  // attribute
-  attr_instance: $ => seq(attrKind($), $.term),
-  attributes: $ => seq('@[', sepBy1($.attr_instance, ','), ']'),
 
   // have
   have_id_decl: $ => seq(have_id_lhs($), $.defeq, $.term),
@@ -109,8 +154,20 @@ export default {
 
   // match
   generalizing_param: $ => seq('(', 'generalizing', $.defeq, choice($.true_val, $.false_val), ')'),
-  motive: $ => seq('(', 'motive', $.defeq, $.term, ')'),
+  motive: $ => seq($.paren_open, 'motive', $.defeq, $.term, $.paren_close),
   match_discr: $ => seq(optional(seq($.binder_ident, ':')), $.term),
+
+  // suffices
+  from_term: $ => seq('from', $.term),
+  show_rhs: $ => choice($.from_term, $.term_by),
+  suffices_decl: $ => seq(optional(seq($.binder_ident, ':')), $.term, $.show_rhs),
+
+  // fun
+  fun_binder: $ => prec(10, choice($.strict_implicit_binder, $.implicit_binder, $.inst_binder, $.term)),
+  basic_fun: $ => seq(repeat1($.fun_binder), optType($), $.fun_arrow, $.term),
+
+  // argument
+  named_argument: $ => seq($.paren_open, $.ident, $.defeq, $.term, $.paren_close),
 }
 
 const have_id_lhs = $ => seq(optional(seq($.binder_ident, repeat($.let_id_binder))), optType($))

@@ -8,7 +8,7 @@
 // @ts-check
 
 import { attrKind } from "./attr.js";
-import { bracketedBinder, optType } from "./term.js";
+import { optType } from "./term.js";
 import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndentSemicolon } from "./util.js";
 
 const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
@@ -51,9 +51,9 @@ const commands = {
   cmd_export: $ => seq('export', $.ident, '(', repeat1($.ident), ')'),
   cmd_open: $ => seq('open', $._open_decl),
   cmd_mutual: $ => 'mutual',
-  cmd_initialize: $ => seq(declModifiers($), choice(/initialize\s/, /builtin_initialize\s/),
+  cmd_initialize: $ => prec(100, seq(declModifiers($), choice(/initialize\s/, /builtin_initialize\s/),
     // HACK: see comment under POP_COL on scanner.c
-    optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq),
+    optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq)),
   cmd_in: $ => prec.right(seq($.command, /\sin\s/, $.command)),
   cmd_add_docstring: $ => seq($.documentation, 'add_decl_doc', $.ident),
   cmd_register_tactic_tag: $ => seq(optional($.documentation), 'register_tactic_tag', $.ident, $.str_lit),
@@ -110,6 +110,7 @@ export default {
   ...declarations,
   ...open_decls,
   command: $ => oneOf($, commands),
+  _open_decl: $ => oneOf($, open_decls),
 
   documentation: $ => seq('/--', $.comment_body, '-/'),
   visibility: _ => choice(/private\s/, /protected\s/),
@@ -134,7 +135,8 @@ export default {
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
   computed_fields: $ => prec.right(seq('with', manyIndent($, $.computed_fields))),
-  struct_explicit_binder: $ => seq(declModifiers($), '(', repeat1($.ident), optDeclSig($), optional(seq($.defeq, $.term)), ')'),
+  struct_explicit_binder: $ => seq(declModifiers($), $.paren_open, repeat1($.ident), optDeclSig($),
+    optional(seq($.defeq, $.term)), $.paren_close),
   struct_implicit_binder: $ => seq(declModifiers($), '{', repeat1($.ident), declSig($), '}'),
   struct_inst_binder: $ => seq(declModifiers($), '[', repeat1($.ident), declSig($), ']'),
   struct_simple_binder: $ => seq(declModifiers($), $.ident, optDeclSig($), optional(seq($.defeq, $.term))),

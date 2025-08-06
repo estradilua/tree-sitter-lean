@@ -21,7 +21,7 @@ const tactics = {
   tactic_open: $ => seq('open', $._open_decl, 'in', $.tactic_seq),
   tactic_set_option: $ => seq('set_option', $.ident, choice('true', 'false', $.str_lit, $.num_lit), 'in', $.tactic_seq),
 
-  tactic_other: $ => seq($.ident, $.term),
+  tactic_other: $ => seq($.ident, optional($.term)),
 }
 
 export default {

@@ -116,14 +116,18 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   lexer->log(
       lexer,
       "valid symbols: raw_start=%d, raw_content=%d, raw_end=%d, push_col=%d, "
-      "alts_start=%d, alt_start=%d, eq_col_start=%d, gt_col_bar=%d, dedent=%d, "
-      "error_sentinel=%d",
+      "pop_col=%d, match_alts_start=%d, match_alt_start=%d, eq_col_start=%d, "
+      "gt_col_bar=%d, gt_col_else=%d, dedent=%d, paren_open=%d, "
+      "paren_close=%d, end_of_file=%d, error_sentinel=%d",
       valid_symbols[RAW_STRING_LITERAL_START],
       valid_symbols[RAW_STRING_LITERAL_CONTENT],
       valid_symbols[RAW_STRING_LITERAL_END], valid_symbols[PUSH_COL],
-      valid_symbols[MATCH_ALTS_START], valid_symbols[MATCH_ALT_START],
-      valid_symbols[EQ_COL_START], valid_symbols[GT_COL_BAR],
-      valid_symbols[DEDENT], valid_symbols[ERROR_SENTINEL]);
+      valid_symbols[POP_COL], valid_symbols[MATCH_ALTS_START],
+      valid_symbols[MATCH_ALT_START], valid_symbols[EQ_COL_START],
+      valid_symbols[GT_COL_BAR], valid_symbols[GT_COL_ELSE],
+      valid_symbols[DEDENT], valid_symbols[PAREN_OPEN],
+      valid_symbols[PAREN_CLOSE], valid_symbols[END_OF_FILE],
+      valid_symbols[ERROR_SENTINEL]);
 
   // eof or error recovery
   bool exceptional = valid_symbols[ERROR_SENTINEL] || eof(lexer);
