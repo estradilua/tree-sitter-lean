@@ -57,6 +57,23 @@ typedef struct {
 // we use this to indicate parenthesis enclosures, simulating 'withoutPosition'
 #define PAREN 0
 
+#define SCAN_DELIMITER(c_open, c_close, sym_open, sym_close)                   \
+  if (valid_symbols[sym_open] && lexer->lookahead == c_open) {                 \
+    advance(lexer);                                                            \
+    lexer->result_symbol = sym_open;                                           \
+    lexer->mark_end(lexer);                                                    \
+    array_push(&scanner->cols, PAREN);                                         \
+    return true;                                                               \
+  }                                                                            \
+  if (valid_symbols[sym_close] && lexer->lookahead == c_close &&               \
+      scanner->cols.size && *array_back(&scanner->cols) == PAREN) {            \
+    advance(lexer);                                                            \
+    lexer->result_symbol = sym_close;                                          \
+    lexer->mark_end(lexer);                                                    \
+    array_pop(&scanner->cols);                                                 \
+    return true;                                                               \
+  }
+
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 static inline bool eof(TSLexer *lexer) { return lexer->eof(lexer); }
@@ -255,22 +272,10 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (lexer->lookahead == '(' && valid_symbols[PAREN_OPEN]) {
-    advance(lexer);
-    lexer->result_symbol = PAREN_OPEN;
-    lexer->mark_end(lexer);
-    array_push(&scanner->cols, PAREN);
-    return true;
-  }
-
-  if (lexer->lookahead == ')' && scanner->cols.size &&
-      *array_back(&scanner->cols) == PAREN && valid_symbols[PAREN_CLOSE]) {
-    advance(lexer);
-    lexer->result_symbol = PAREN_CLOSE;
-    lexer->mark_end(lexer);
-    array_pop(&scanner->cols);
-    return true;
-  }
+  SCAN_DELIMITER('(', ')', PAREN_OPEN, PAREN_CLOSE)
+  SCAN_DELIMITER('[', ']', SQUARE_OPEN, SQUARE_CLOSE)
+  SCAN_DELIMITER('{', '}', CURLY_OPEN, CURLY_CLOSE)
+  SCAN_DELIMITER(10216, 10217, ANGLE_OPEN, ANGLE_CLOSE)
 
   if (lexer->lookahead == '|' &&
       (valid_symbols[MATCH_ALTS_START] ||
