@@ -67,10 +67,28 @@ export default {
 
   // see identFnAux on Basic.lean
   ident: $ => seq(
-    choice(/[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/, /«[^»]+»/),
+    choice(
+      /([[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
+      /«[^»]+»/
+    ),
     repeat(seq(
       token.immediate('.'),
       token.immediate(choice(/[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/, /«[^»]+»/, /[0-9]+/))
+    )),
+    optional(seq(
+      token.immediate('.'),
+      token.immediate('{'),
+      sepBy1($._level, ','),
+      '}'
+    ))
+  ),
+  
+  decl_ident: $ => seq(
+    $.ident,
+    optional(seq(
+      '.{',
+      sepBy1(/[^,}\s]/, ','),
+      '}'
     ))
   ),
 
