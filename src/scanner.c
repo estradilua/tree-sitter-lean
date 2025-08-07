@@ -38,6 +38,12 @@ enum TokenType {
 
   PAREN_OPEN,
   PAREN_CLOSE,
+  ANGLE_OPEN,
+  ANGLE_CLOSE,
+  CURLY_OPEN,
+  CURLY_CLOSE,
+  SQUARE_OPEN,
+  SQUARE_CLOSE,
 
   END_OF_FILE,
   ERROR_SENTINEL,
@@ -216,7 +222,10 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (exceptional || eof(lexer))
     return false;
 
-  if (valid_symbols[DEDENT] && lexer->lookahead == ')' && scanner->cols.size &&
+  if ((lexer->lookahead == ')' || lexer->lookahead == ']' ||
+       lexer->lookahead == '}' || lexer->lookahead == 10217 ||
+       lexer->lookahead == ',') &&
+      valid_symbols[DEDENT] && scanner->cols.size &&
       *array_back(&scanner->cols) != PAREN) {
     array_pop(&scanner->cols);
     lexer->result_symbol = DEDENT;

@@ -425,3 +425,187 @@ example : True := by
                     (tactic_p
                       (tactic_other
                         (ident)))))))))))))
+
+==========
+cat.lean 1
+==========
+
+instance : Functor.Full typeToCat.{u} where
+  map_surjective F := ⟨Discrete.as ∘ F.obj ∘ Discrete.mk, by
+    apply Functor.ext
+    · intro x y f
+      dsimp
+      apply ULift.ext
+      aesop_cat
+    · rintro ⟨x⟩
+      apply Discrete.ext
+      rfl⟩
+
+end CategoryTheory
+
+---
+
+(module
+  (command
+    (cmd_declaration
+      (instance
+        (type_spec
+          (term
+            (term_ident
+              (ident))
+            (term_ident
+              (ident
+                (level_ident
+                  (ident))))))
+        (decl_val
+          (where_struct_inst
+            (struct_inst_field
+              (ident)
+              (let_id_binder
+                (binder_ident
+                  (ident)))
+              (defeq)
+              (term
+                (term_anonymous_ctor
+                  (term
+                    (term_ident
+                      (ident))
+                    (term_other)
+                    (term_ident
+                      (ident))
+                    (term_other)
+                    (term_ident
+                      (ident)))
+                  (term
+                    (term_by
+                      (tactic_seq
+                        (tactic_seq_indented
+                          (tactic_p
+                            (tactic_other
+                              (ident)
+                              (term
+                                (term_ident
+                                  (ident)))))
+                          (tactic_p
+                            (tactic_cdot
+                              (cdot)
+                              (tactic_seq
+                                (tactic_seq_indented
+                                  (tactic_p
+                                    (tactic_intro
+                                      (term
+                                        (term_ident
+                                          (ident))
+                                        (term_ident
+                                          (ident))
+                                        (term_ident
+                                          (ident)))))
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)))
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)
+                                      (term
+                                        (term_ident
+                                          (ident)))))
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)))))))
+                          (tactic_p
+                            (tactic_cdot
+                              (cdot)
+                              (tactic_seq
+                                (tactic_seq_indented
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)
+                                      (term
+                                        (term_anonymous_ctor
+                                          (term
+                                            (term_ident
+                                              (ident)))))))
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)
+                                      (term
+                                        (term_ident
+                                          (ident)))))
+                                  (tactic_p
+                                    (tactic_other
+                                      (ident)))))))))))))))))))
+  (command
+    (cmd_end
+      (ident))))
+
+===========================================
+anonymous ctor with by's separated by comma
+===========================================
+
+inductive Foo where
+  | mkFoo : Nat → Nat → Foo
+
+example : Foo := by
+  exact ⟨by exact 1, by exact 2⟩
+
+---
+
+(module
+  (command
+    (cmd_declaration
+      (inductive
+        (decl_ident
+          (ident))
+        (ctor
+          (ident)
+          (type_spec
+            (term
+              (term_ident
+                (ident))
+              (term_arrow
+                (right_arrow))
+              (term_ident
+                (ident))
+              (term_arrow
+                (right_arrow))
+              (term_ident
+                (ident))))))))
+  (command
+    (cmd_declaration
+      (example
+        (type_spec
+          (term
+            (term_ident
+              (ident))))
+        (decl_val
+          (decl_val_simple
+            (defeq)
+            (term
+              (term_by
+                (tactic_seq
+                  (tactic_seq_indented
+                    (tactic_p
+                      (tactic_other
+                        (ident)
+                        (term
+                          (term_anonymous_ctor
+                            (term
+                              (term_by
+                                (tactic_seq
+                                  (tactic_seq_indented
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)
+                                        (term
+                                          (term_num
+                                            (num_lit)))))))))
+                            (term
+                              (term_by
+                                (tactic_seq
+                                  (tactic_seq_indented
+                                    (tactic_p
+                                      (tactic_other
+                                        (ident)
+                                        (term
+                                          (term_num
+                                            (num_lit)))))))))))))))))))))))
