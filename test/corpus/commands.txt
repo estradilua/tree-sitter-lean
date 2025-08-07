@@ -277,18 +277,21 @@ def AtLeastOne.head : AtLeastOne α → α
               (match_alt
                 (term
                   (term_anonymous_ctor
+                    (angle_open)
                     (term
                       (term_ident
                         (ident)))
                     (term
-                      (term_hole))))
+                      (term_hole))
+                    (angle_close)))
                 (darrow)
                 (term
                   (term_ident
                     (ident))))
               (match_alt
                 (term
-                  (term_cdot)
+                  (term_cdot
+                    (cdot))
                   (term_ident
                     (ident))
                   (term_ident
@@ -467,6 +470,7 @@ end CategoryTheory
               (defeq)
               (term
                 (term_anonymous_ctor
+                  (angle_open)
                   (term
                     (term_ident
                       (ident))
@@ -522,9 +526,11 @@ end CategoryTheory
                                       (ident)
                                       (term
                                         (term_anonymous_ctor
+                                          (angle_open)
                                           (term
                                             (term_ident
-                                              (ident)))))))
+                                              (ident)))
+                                          (angle_close)))))
                                   (tactic_p
                                     (tactic_other
                                       (ident)
@@ -533,7 +539,8 @@ end CategoryTheory
                                           (ident)))))
                                   (tactic_p
                                     (tactic_other
-                                      (ident)))))))))))))))))))
+                                      (ident)))))))))))
+                  (angle_close)))))))))
   (command
     (cmd_end
       (ident))))
@@ -589,6 +596,7 @@ example : Foo := by
                         (ident)
                         (term
                           (term_anonymous_ctor
+                            (angle_open)
                             (term
                               (term_by
                                 (tactic_seq
@@ -608,4 +616,5 @@ example : Foo := by
                                         (ident)
                                         (term
                                           (term_num
-                                            (num_lit)))))))))))))))))))))))
+                                            (num_lit)))))))))
+                            (angle_close)))))))))))))))
