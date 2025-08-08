@@ -16,10 +16,13 @@ const tactics = {
   tactic_match: $ => seq('match', optional($.generalizing_param), optional($.motive),
     sepBy1($.match_discr, ','), 'with', $.match_alts),
   tactic_intro_match: $ => seq('intro', $.match_alts),
+  tactic_intro: $ => seq('intro', optional($.term)),
 
   // Command.lean
   tactic_open: $ => seq('open', $._open_decl, 'in', $.tactic_seq),
   tactic_set_option: $ => seq('set_option', $.ident, choice('true', 'false', $.str_lit, $.num_lit), 'in', $.tactic_seq),
+
+  tactic_cdot: $ => seq($.cdot, $.tactic_seq),
 
   tactic_other: $ => seq($.ident, optional($.term)),
 }
