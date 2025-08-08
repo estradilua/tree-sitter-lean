@@ -116,22 +116,12 @@ export default {
   visibility: _ => choice(/private\s/, /protected\s/),
   noncomputable: _ => /noncomputable\s/,
 
-  decl_ident: $ => seq(
-    $.ident,
-    optional(seq(
-      '.{',
-      /[^,}\s]/,
-      repeat(seq(',', /[^,}\s]/)),
-      '}'
-    ))
-  ),
-
   decl_val_simple: $ => seq($.defeq, $.term, /* $.termination_hints */ optional($.where_decls)),
   decl_val_eqns: $ => seq($.match_alts, /* $.termination_hints */ optional($.where_decls)),
   where_struct_inst: $ => seq('where', sepByIndentSemicolon($, $.struct_inst_field), optional($.where_decls)),
   decl_val: $ => choice($.decl_val_simple, $.decl_val_eqns, $.where_struct_inst),
   decl_deriving: $ => seq('deriving' /* notFollowedBy 'instance' */, sepBy1($.ident, ',')),
-  named_prio: $ => seq('(', 'priority', $.defeq, $.num_lit, ')'),
+  named_prio: $ => seq($.paren_open, 'priority', $.defeq, $.num_lit, $.paren_close),
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
   computed_fields: $ => prec.right(seq('with', manyIndent($, $.computed_fields))),
