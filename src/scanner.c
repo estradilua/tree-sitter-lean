@@ -36,14 +36,8 @@ enum TokenType {
   GT_COL_ELSE,
   DEDENT,
 
-  PAREN_OPEN,
-  PAREN_CLOSE,
-  ANGLE_OPEN,
-  ANGLE_CLOSE,
-  CURLY_OPEN,
-  CURLY_CLOSE,
-  SQUARE_OPEN,
-  SQUARE_CLOSE,
+  CTX_OPEN,
+  CTX_CLOSE,
 
   END_OF_FILE,
   ERROR_SENTINEL,
@@ -55,24 +49,7 @@ typedef struct {
 } Scanner;
 
 // we use this to indicate parenthesis enclosures, simulating 'withoutPosition'
-#define PAREN 0
-
-#define SCAN_DELIMITER(c_open, c_close, sym_open, sym_close)                   \
-  if (valid_symbols[sym_open] && lexer->lookahead == c_open) {                 \
-    advance(lexer);                                                            \
-    lexer->result_symbol = sym_open;                                           \
-    lexer->mark_end(lexer);                                                    \
-    array_push(&scanner->cols, PAREN);                                         \
-    return true;                                                               \
-  }                                                                            \
-  if (valid_symbols[sym_close] && lexer->lookahead == c_close &&               \
-      scanner->cols.size && *array_back(&scanner->cols) == PAREN) {            \
-    advance(lexer);                                                            \
-    lexer->result_symbol = sym_close;                                          \
-    lexer->mark_end(lexer);                                                    \
-    array_pop(&scanner->cols);                                                 \
-    return true;                                                               \
-  }
+#define CTX 0
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
@@ -140,23 +117,34 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
       lexer,
       "valid symbols: raw_start=%d, raw_content=%d, raw_end=%d, push_col=%d, "
       "pop_col=%d, match_alts_start=%d, match_alt_start=%d, eq_col_start=%d, "
-      "gt_col_bar=%d, gt_col_else=%d, dedent=%d, paren_open=%d, "
-      "paren_close=%d, end_of_file=%d, error_sentinel=%d",
+      "gt_col_bar=%d, gt_col_else=%d, dedent=%d, ctx_open=%d, "
+      "ctx_close=%d, end_of_file=%d, error_sentinel=%d",
       valid_symbols[RAW_STRING_LITERAL_START],
       valid_symbols[RAW_STRING_LITERAL_CONTENT],
       valid_symbols[RAW_STRING_LITERAL_END], valid_symbols[PUSH_COL],
       valid_symbols[POP_COL], valid_symbols[MATCH_ALTS_START],
       valid_symbols[MATCH_ALT_START], valid_symbols[EQ_COL_START],
       valid_symbols[GT_COL_BAR], valid_symbols[GT_COL_ELSE],
-      valid_symbols[DEDENT], valid_symbols[PAREN_OPEN],
-      valid_symbols[PAREN_CLOSE], valid_symbols[END_OF_FILE],
-      valid_symbols[ERROR_SENTINEL]);
+      valid_symbols[DEDENT], valid_symbols[CTX_OPEN], valid_symbols[CTX_CLOSE],
+      valid_symbols[END_OF_FILE], valid_symbols[ERROR_SENTINEL]);
 
   // eof or error recovery
   bool exceptional = valid_symbols[ERROR_SENTINEL] || eof(lexer);
 
   if (!exceptional && valid_symbols[POP_COL] && scanner->cols.size) {
     lexer->result_symbol = POP_COL;
+    array_pop(&scanner->cols);
+    return true;
+  }
+
+  if (!exceptional && valid_symbols[CTX_OPEN]) {
+    lexer->result_symbol = CTX_OPEN;
+    array_push(&scanner->cols, CTX);
+    return true;
+  }
+  if (!exceptional && valid_symbols[CTX_CLOSE] && scanner->cols.size &&
+      *array_back(&scanner->cols) == CTX) {
+    lexer->result_symbol = CTX_CLOSE;
     array_pop(&scanner->cols);
     return true;
   }
@@ -230,7 +218,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (eof(lexer) && valid_symbols[END_OF_FILE]) {
+  if (!exceptional && eof(lexer) && valid_symbols[END_OF_FILE]) {
     lexer->result_symbol = END_OF_FILE;
     lexer->mark_end(lexer);
     return true;
@@ -243,7 +231,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
        lexer->lookahead == '}' || lexer->lookahead == 10217 ||
        lexer->lookahead == ',' || lexer->lookahead == ':') &&
       valid_symbols[DEDENT] && scanner->cols.size &&
-      *array_back(&scanner->cols) != PAREN) {
+      *array_back(&scanner->cols) != CTX) {
     if (lexer->lookahead == ':') {
       skip(lexer);
       if (!iswspace(lexer->lookahead)) // perhaps iswpunct would work well?
@@ -276,11 +264,6 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->mark_end(lexer);
     return true;
   }
-
-  SCAN_DELIMITER('(', ')', PAREN_OPEN, PAREN_CLOSE)
-  SCAN_DELIMITER('[', ']', SQUARE_OPEN, SQUARE_CLOSE)
-  SCAN_DELIMITER('{', '}', CURLY_OPEN, CURLY_CLOSE)
-  SCAN_DELIMITER(10216, 10217, ANGLE_OPEN, ANGLE_CLOSE)
 
   if (lexer->lookahead == '|' &&
       (valid_symbols[MATCH_ALTS_START] ||
