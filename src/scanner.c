@@ -244,6 +244,11 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
        lexer->lookahead == ',' || lexer->lookahead == ':') &&
       valid_symbols[DEDENT] && scanner->cols.size &&
       *array_back(&scanner->cols) != PAREN) {
+    if (lexer->lookahead == ':') {
+      skip(lexer);
+      if (!iswspace(lexer->lookahead)) // perhaps iswpunct would work well?
+        return false;
+    }
     array_pop(&scanner->cols);
     lexer->result_symbol = DEDENT;
     return true;
