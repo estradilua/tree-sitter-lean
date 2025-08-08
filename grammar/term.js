@@ -7,7 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-import { oneOf, sepBy, sepBy1, sepBy1IndentSemicolon } from "./util.js"
+import { oneOf, sepBy, sepBy1, sepBy1IndentSemicolon, sepByIndent } from "./util.js"
 
 export const optIdent = $ => optional(seq($.ident, ':'))
 export const optType = ($, requireType = false) => requireType ? $.type_spec : optional($.type_spec)
@@ -42,8 +42,8 @@ const terms = {
   term_match: $ => seq('match', optional($.generalizing_param), optional($.motive), sepBy1($.match_discr, ','), 'with', $.match_alts),
   term_nomatch: $ => prec.right(seq('nomatch', sepBy1($.term, ','))),
   term_nofun: $ => 'nofun',
-  // term_struct_inst: $ => seq('{', optional(seq(sepBy1($.term, ','), 'with')),
-  //   sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
+  term_struct_inst: $ => seq('{', optional(seq(sepBy1($.term, ','), 'with')),
+    sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
 
   // Notation.lean
