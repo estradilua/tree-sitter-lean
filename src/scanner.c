@@ -229,7 +229,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
 
   if ((lexer->lookahead == ')' || lexer->lookahead == ']' ||
        lexer->lookahead == '}' || lexer->lookahead == 10217 ||
-       lexer->lookahead == ',' || lexer->lookahead == ':') &&
+       lexer->lookahead == ',' /* || lexer->lookahead == ':' */) &&
       valid_symbols[DEDENT] && scanner->cols.size &&
       *array_back(&scanner->cols) != CTX) {
     if (lexer->lookahead == ':') {

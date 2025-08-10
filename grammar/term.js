@@ -27,11 +27,10 @@ const terms = {
   term_synthetic_hole: $ => seq('?', choice($.ident, '_')),
   term_sorry: $ => 'sorry',
   term_cdot: $ => $.cdot,
-  term_type_ascription: $ => seq($.paren_open, seq($.term, ':', optional($.term)), $.paren_close),
-  term_tuple: $ => seq($.paren_open, optional(seq($.term, ',', sepBy1($.term, ',', true))),
-    $.paren_close),
-  term_paren: $ => seq($.paren_open, $.term, $.paren_close),
-  term_anonymous_ctor: $ => seq($.angle_open, sepBy($.term, ',', true), $.angle_close),
+  term_type_ascription: $ => seq('(', $._o, seq($.term, ':', optional($.term)), ')', $._c),
+  term_tuple: $ => seq('(', $._o, optional(seq($.term, ',', sepBy1($.term, ',', true))), ')', $._c),
+  term_paren: $ => seq('(', $._o, $.term, ')', $._c),
+  term_anonymous_ctor: $ => seq('⟨', $._o, sepBy($.term, ',', true), '⟩', $._c),
   term_suffices: $ => prec.left(seq('suffices', $.suffices_decl, ';', $.term)),
   term_show: $ => seq('show', $.term, $.show_rhs),
   term_explicit: $ => prec(10, seq('@', $.term)),
@@ -54,16 +53,7 @@ const terms = {
 
 export default {
   ...terms,
-  term: $ => prec.right(repeat1(prec(-10, oneOf($, terms)))),
-  //   prec.right(repeat1(prec(-10, choice(
-  //   seq('{', optional($.term), '}'),
-  //   seq('(', optional($.term), ')'),
-  //   seq('[', optional($.term), ']'),
-  //   seq('⟨', optional($.term), '⟩'),
-  //   $.literal,
-  //   $.ident,
-  //   /[^\s]/,
-  // )))),
+  term: $ => prec.left(repeat1(prec(-10, oneOf($, terms)))),
 
   // see identFnAux on Basic.lean
   ident: $ => seq(
@@ -109,7 +99,7 @@ export default {
 
   // binders
   binder_ident: $ => choice(prec(-20, $.ident), $.term_hole),
-  explicit_binder: $ => seq($.paren_open, repeat1($.binder_ident), optType($), $.paren_close),
+  explicit_binder: $ => seq('(', $._o, repeat1($.binder_ident), optType($), ')', $._c),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
     repeat1($.binder_ident),
@@ -170,8 +160,8 @@ export default {
   have_decl: $ => choice($.have_id_decl, $.let_pat_decl, $.have_eqns_decl),
 
   // match
-  generalizing_param: $ => seq('(', 'generalizing', $.defeq, choice($.true_val, $.false_val), ')'),
-  motive: $ => seq($.paren_open, 'motive', $.defeq, $.term, $.paren_close),
+  generalizing_param: $ => seq('(', $._o, 'generalizing', $.defeq, choice($.true_val, $.false_val), ')', $._c),
+  motive: $ => seq('(', $._o, 'motive', $.defeq, $.term, ')', $._c),
   match_discr: $ => seq(optional(seq($.binder_ident, ':')), $.term),
 
   // suffices
@@ -184,7 +174,7 @@ export default {
   basic_fun: $ => seq(repeat1($.fun_binder), optType($), $.fun_arrow, $.term),
 
   // argument
-  named_argument: $ => seq($.paren_open, $.ident, $.defeq, $.term, $.paren_close),
+  named_argument: $ => seq('(', $._o, $.ident, $.defeq, $.term, ')', $._c),
 }
 
 const have_id_lhs = $ => seq(optional(seq($.binder_ident, repeat($.let_id_binder))), optType($))

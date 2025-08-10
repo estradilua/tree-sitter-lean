@@ -2044,14 +2044,6 @@
           "named": true
         },
         {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
-          "named": true
-        },
-        {
           "type": "type_spec",
           "named": true
         }
@@ -2956,14 +2948,6 @@
           "named": true
         },
         {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
-          "named": true
-        },
-        {
           "type": "term",
           "named": true
         }
@@ -3003,14 +2987,6 @@
         },
         {
           "type": "num_lit",
-          "named": true
-        },
-        {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
           "named": true
         }
       ]
@@ -3361,14 +3337,6 @@
         },
         {
           "type": "noncomputable",
-          "named": true
-        },
-        {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
           "named": true
         },
         {
@@ -4118,16 +4086,8 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
-        {
-          "type": "angle_close",
-          "named": true
-        },
-        {
-          "type": "angle_open",
-          "named": true
-        },
         {
           "type": "term",
           "named": true
@@ -4395,17 +4355,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
-          "named": true
-        },
         {
           "type": "term",
           "named": true
@@ -4568,16 +4520,8 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
-        {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
-          "named": true
-        },
         {
           "type": "term",
           "named": true
@@ -4632,14 +4576,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "paren_close",
-          "named": true
-        },
-        {
-          "type": "paren_open",
-          "named": true
-        },
         {
           "type": "term",
           "named": true
@@ -4921,14 +4857,6 @@
     "named": false
   },
   {
-    "type": "angle_close",
-    "named": true
-  },
-  {
-    "type": "angle_open",
-    "named": true
-  },
-  {
     "type": "attr_kind",
     "named": true
   },
@@ -5194,14 +5122,6 @@
     "named": false
   },
   {
-    "type": "paren_close",
-    "named": true
-  },
-  {
-    "type": "paren_open",
-    "named": true
-  },
-  {
     "type": "partial",
     "named": false
   },
@@ -5379,6 +5299,14 @@
   },
   {
     "type": "∀",
+    "named": false
+  },
+  {
+    "type": "⟨",
+    "named": false
+  },
+  {
+    "type": "⟩",
     "named": false
   },
   {
