@@ -41,8 +41,9 @@ const terms = {
   term_match: $ => seq('match', optional($.generalizing_param), optional($.motive), sepBy1($.match_discr, ','), 'with', $.match_alts),
   term_nomatch: $ => prec.right(seq('nomatch', sepBy1($.term, ','))),
   term_nofun: $ => 'nofun',
-  term_struct_inst: $ => seq('{', optional(seq(sepBy1($.term, ','), 'with')),
-    sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
+  // TODO: this is delicate. PUSH_COL messes stuff up.
+  // term_struct_inst: $ => seq('{', optional(seq($._push_col, sepBy1($.term, ','), 'with', $._pop_col)),
+  //   sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
 
   // Notation.lean
