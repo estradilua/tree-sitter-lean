@@ -23,6 +23,8 @@ export const sepBy1Indent = ($, p, sep, trailing = false) => trailing ?
     sepBy1(p, choice($._eq_col_start, sep)),
     $._dedent
   )
+
+// FIXME: This won't work for PUSH_COL reasons
 export const sepByIndent = ($, p, sep, trailing = false) => optional(sepBy1Indent($, p, sep, trailing))
 
 
@@ -30,6 +32,8 @@ export const sepByIndentSemicolon = ($, p) => sepByIndent($, p, ';', true)
 export const sepBy1IndentSemicolon = ($, p) => sepBy1Indent($, p, ';', true)
 
 export const many1Indent = ($, p) => seq($._push_col, sepBy1(p, $._eq_col_start), $._dedent)
+
+// FIXME: This won't work for PUSH_COL reasons
 export const manyIndent = ($, p) => optional(many1Indent($, p))
 
 export const oneOf = ($, obj) => choice.apply(null, Object.keys(obj).map(k => $[k]))
