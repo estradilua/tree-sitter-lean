@@ -235,7 +235,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (exceptional || eof(lexer))
     return false;
 
-  if (lookahead_dedent(lexer) && valid_symbols[DEDENT] && scanner->cols.size &&
+  if (valid_symbols[DEDENT] && lookahead_dedent(lexer) && scanner->cols.size &&
       *array_back(&scanner->cols) != CTX) {
     if (lexer->lookahead == ':') {
       skip(lexer);
@@ -248,7 +248,8 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[PUSH_COL] && !lookahead_dedent(lexer) &&
-      (!scanner->cols.size || indent > *array_back(&scanner->cols))) {
+      (scanner->cols.size ? indent > *array_back(&scanner->cols)
+                          : indent > 0)) {
     lexer->result_symbol = PUSH_COL;
     lexer->mark_end(lexer);
     array_push(&scanner->cols, indent);
