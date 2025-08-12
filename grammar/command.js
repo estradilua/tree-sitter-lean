@@ -125,10 +125,10 @@ export default {
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
   computed_fields: $ => prec.right(seq('with', manyIndent($, $.computed_fields))),
-  struct_explicit_binder: $ => seq(declModifiers($), '(', $._o, $.ident, optDeclSig($),
-    optional(seq($.defeq, $.term)), ')', $._c),
-  struct_implicit_binder: $ => seq(declModifiers($), '{', $.ident, declSig($), '}'),
-  struct_inst_binder: $ => seq(declModifiers($), '[', $.ident, declSig($), ']'),
+  struct_explicit_binder: $ => seq(declModifiers($), '(', $._o, repeat1($.ident), struct_binder_binders($),
+    optional($.type_spec), optional(seq($.defeq, $.term)), ')', $._c),
+  struct_implicit_binder: $ => seq(declModifiers($), '{', repeat1($.ident), struct_binder_binders($), $.type_spec, '}'),
+  struct_inst_binder: $ => seq(declModifiers($), '[', repeat1($.ident), struct_binder_binders($), $.type_spec, ']'),
   struct_simple_binder: $ => seq(declModifiers($), $.ident, optDeclSig($), optional(seq($.defeq, $.term))),
   struct_fields: $ => many1Indent($, choice($.struct_explicit_binder, $.struct_implicit_binder,
     $.struct_inst_binder, $.struct_simple_binder)),
@@ -142,3 +142,6 @@ export default {
   notation_item: $ => choice($.str_lit, seq($.ident, optional($.precedence))),
   kind: $ => seq('(', 'kind', $.defeq, $.ident, ')'),
 }
+
+const struct_binder_binders = $ => optional(seq(choice($.bracketed_binder, $.term_hole),
+  repeat(choice($.bracketed_binder, $._binder_ident))))
