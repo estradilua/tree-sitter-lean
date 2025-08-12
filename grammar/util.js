@@ -12,19 +12,20 @@ export const sepBy1 = (p, sep, trailing = false) => trailing ?
 
 export const sepBy = (p, sep, trailing = false) => optional(sepBy1(p, sep, trailing))
 
-export const sepBy1Indent = ($, p, sep, trailing = false) => trailing ?
+export const sepBy1Indent = ($, p, sep, trailing = false, dedent = $._dedent) => trailing ?
   seq(
     $._push_col,
     sepBy1(p, choice($._eq_col_start, sep)),
     optional(sep),
-    $._dedent
+    dedent
   ) : seq(
     $._push_col,
     sepBy1(p, choice($._eq_col_start, sep)),
-    $._dedent
+    dedent
   )
 
-export const sepByIndent = ($, p, sep, trailing = false) => optional(sepBy1Indent($, p, sep, trailing))
+export const sepByIndent = ($, p, sep, trailing = false, dedent = $._dedent) =>
+             optional(sepBy1Indent($, p, sep, trailing, dedent))
 
 
 export const sepByIndentSemicolon = ($, p) => sepByIndent($, p, ';', true)
