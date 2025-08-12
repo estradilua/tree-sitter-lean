@@ -14,7 +14,7 @@ export const optType = ($, requireType = false) => requireType ? $.type_spec : o
 
 const terms = {
   term_by: $ => seq('by', $.tactic_seq),
-  term_ident: $ => $.ident,
+  term_ident: $ => seq($.ident, optional($._ident_univ)),
   term_num: $ => $.num_lit,
   term_str: $ => $.str_lit,
   term_raw_str: $ => $.raw_str_lit,
@@ -68,22 +68,17 @@ export default {
   term: $ => prec.left(repeat1(prec(-10, oneOf($, terms)))),
 
   // see identFnAux on Basic.lean
-  ident: $ => seq(
-    choice(
-      /([[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
-      /«[^»]+»/
-    ),
-    repeat(seq(
-      token.immediate('.'),
-      token.immediate(choice(/[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/, /«[^»]+»/, /[0-9]+/))
-    )),
-    optional(seq(
-      token.immediate('.'),
-      token.immediate('{'),
-      sepBy1($._level, ','),
-      '}'
-    ))
+  ident: $ => seq($._ident_first, repeat($._ident_next)),
+  _ident_first: $ => choice(
+    /([[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
+    /«[^»]+»/
   ),
+  _ident_next: $ => seq(
+    token.immediate('.'),
+    token.immediate(choice(/[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/, /«[^»]+»/, /[0-9]+/))
+  ),
+
+  _ident_univ: $ => seq(token.immediate('.{'), sepBy1($._level, ','), '}'),
 
   decl_ident: $ => prec(10, seq(
     $.ident,
