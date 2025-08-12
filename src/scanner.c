@@ -109,6 +109,14 @@ static inline bool scan_raw_string_end(Scanner *scanner, TSLexer *lexer) {
   return true;
 }
 
+// Whether we are looking at a 'dedentable' character.
+// TODO: deal with ':' properly
+inline bool lookahead_dedent(TSLexer *lexer) {
+  return (lexer->lookahead == ')' || lexer->lookahead == ']' ||
+          lexer->lookahead == '}' || lexer->lookahead == 10217 ||
+          lexer->lookahead == ',' /* || lexer->lookahead == ':' */);
+}
+
 bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
                                             const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
@@ -227,10 +235,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
   if (exceptional || eof(lexer))
     return false;
 
-  if ((lexer->lookahead == ')' || lexer->lookahead == ']' ||
-       lexer->lookahead == '}' || lexer->lookahead == 10217 ||
-       lexer->lookahead == ',' /* || lexer->lookahead == ':' */) &&
-      valid_symbols[DEDENT] && scanner->cols.size &&
+  if (lookahead_dedent(lexer) && valid_symbols[DEDENT] && scanner->cols.size &&
       *array_back(&scanner->cols) != CTX) {
     if (lexer->lookahead == ':') {
       skip(lexer);
@@ -242,7 +247,7 @@ bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (valid_symbols[PUSH_COL] &&
+  if (valid_symbols[PUSH_COL] && !lookahead_dedent(lexer) &&
       (!scanner->cols.size || indent > *array_back(&scanner->cols))) {
     lexer->result_symbol = PUSH_COL;
     lexer->mark_end(lexer);
