@@ -618,3 +618,46 @@ example : Foo := by
                                           (term_num
                                             (num_lit)))))))))
                             (angle_close)))))))))))))))
+
+
+================
+linearmap.defs 1
+================
+
+instance (priority := 100) instAddMonoidHomClass [FunLike F M M₃] [SemilinearMapClass F σ M M₃] :
+    AddMonoidHomClass F M M₃ :=
+  { SemilinearMapClass.toAddHomClass with
+    map_zero := fun f ↦
+      show f 0 = 0 by
+        rw [← zero_smul R (0 : M), map_smulₛₗ]
+        simp : Type }
+
+---
+
+===================
+weird struct binder
+===================
+
+structure Bar where
+  (bar baz (a : Nat) b : Nat := a + b)
+
+---
+
+========================
+struct_inst empty fields
+========================
+
+structure Bar where
+
+def Foo (a b : Bar) : Bar := {a, b with}
+
+---
+
+
+=======================
+cursed type ascriptions
+=======================
+
+#check (by obtain : True : True)
+
+---
