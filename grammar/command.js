@@ -54,7 +54,7 @@ const commands = {
   cmd_initialize: $ => prec(100, seq(declModifiers($), choice('initialize', 'builtin_initialize'),
     // HACK: see comment under POP_COL on scanner.c
     optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq)),
-  cmd_in: $ => prec.right(seq($.command, /\sin\s/, $.command)),
+  cmd_in: $ => prec.right(seq($.command, 'in', $.command)),
   cmd_add_docstring: $ => seq($.documentation, 'add_decl_doc', $.ident),
   cmd_register_tactic_tag: $ => seq(optional($.documentation), 'register_tactic_tag', $.ident, $.str_lit),
   cmd_tactic_extension: $ => seq(optional($.documentation), 'tactic_extension', $.ident),
@@ -72,7 +72,7 @@ const commands = {
     $.darrow, $.term),
   cmd_macro_rules: $ => seq(optional($.documentation), optional($.attributes), attrKind($), 'macro_rules',
     optional($.kind), $.match_alts),
-  cmd_syntax: $ => seq(optional($.documentation), optional($.attributes), attrKind($), /syntax\s/,
+  cmd_syntax: $ => seq(optional($.documentation), optional($.attributes), attrKind($), 'syntax',
     optional($.precedence), optional($.named_name), optional($.named_prio), repeat1($.syntax_p), ':',
     $.ident),
 }
@@ -113,8 +113,8 @@ export default {
   _open_decl: $ => oneOf($, open_decls),
 
   documentation: $ => seq('/--', $.comment_body, '-/'),
-  visibility: _ => choice(/private\s/, /protected\s/),
-  noncomputable: _ => /noncomputable\s/,
+  visibility: _ => choice('private', 'protected'),
+  noncomputable: _ => 'noncomputable',
 
   decl_val_simple: $ => seq($.defeq, $.term, /* $.termination_hints */ optional($.where_decls)),
   decl_val_eqns: $ => seq($.match_alts, /* $.termination_hints */ optional($.where_decls)),
