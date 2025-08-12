@@ -17,7 +17,7 @@ const do_elems = {
   do_let_meta_expr: $ => seq('let_expr', $.match_expr_pat, $.left_arrow, $.term, $.gt_col_bar, $.do_seq),
   do_let_rec: $ => seq('let', 'rec', $.let_rec_decls),
   do_let_arrow: $ => seq('let', optional('mut'), choice($.do_id_decl, $.do_pat_decl)),
-  do_reassign: $ => choice($.let_id_decl_no_binders, $.let_pat_decl),
+  do_reassign: $ => $.let_pat_decl,
   do_reassign_arrow: $ => choice($.do_id_decl, $.do_pat_decl),
   do_have: $ => seq('have', $.have_decl),
   do_if: $ => seq(
@@ -37,7 +37,7 @@ export default {
   do_seq_bracketed: $ => seq('{', repeat1($.do_seq_item), '}'),
   do_seq_indent: $ => many1Indent($, $.do_seq_item),
   do_seq: $ => choice($.do_seq_bracketed, $.do_seq_indent),
-  do_id_decl: $ => seq($.ident, optType($), $.left_arrow, $.do_elem),
+  do_id_decl: $ => seq($._binder_ident, optType($), $.left_arrow, $.do_elem),
   do_pat_decl: $ => prec.right(seq($.term, $.left_arrow, $.do_elem, optional(seq($.gt_col_bar, $.do_seq)))),
   do_if_let_pure: $ => seq($.defeq, $.term),
   do_if_let_bind: $ => seq($.left_arrow, $.term),

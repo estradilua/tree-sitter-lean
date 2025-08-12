@@ -11,8 +11,8 @@ import { attrKind } from "./attr.js";
 import { optType } from "./term.js";
 import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndentSemicolon } from "./util.js";
 
-const declSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), $.type_spec)
-const optDeclSig = $ => seq(repeat(choice($.binder_ident, $.bracketed_binder)), optType($))
+const declSig = $ => seq(repeat(choice($._binder_ident, $.bracketed_binder)), $.type_spec)
+const optDeclSig = $ => seq(repeat(choice($._binder_ident, $.bracketed_binder)), optType($))
 
 const declModifiers = $ => seq(
   optional($.documentation),
@@ -125,15 +125,15 @@ export default {
   ctor: $ => seq(optional($.documentation), '|', declModifiers($), $.ident, optDeclSig($)),
   computed_field: $ => seq(declModifiers($), $.ident, ':', $.term, $.match_alts),
   computed_fields: $ => prec.right(seq('with', manyIndent($, $.computed_fields))),
-  struct_explicit_binder: $ => seq(declModifiers($), '(', $._o, repeat1($.ident), optDeclSig($),
+  struct_explicit_binder: $ => seq(declModifiers($), '(', $._o, $.ident, optDeclSig($),
     optional(seq($.defeq, $.term)), ')', $._c),
-  struct_implicit_binder: $ => seq(declModifiers($), '{', repeat1($.ident), declSig($), '}'),
-  struct_inst_binder: $ => seq(declModifiers($), '[', repeat1($.ident), declSig($), ']'),
+  struct_implicit_binder: $ => seq(declModifiers($), '{', $.ident, declSig($), '}'),
+  struct_inst_binder: $ => seq(declModifiers($), '[', $.ident, declSig($), ']'),
   struct_simple_binder: $ => seq(declModifiers($), $.ident, optDeclSig($), optional(seq($.defeq, $.term))),
-  struct_fields: $ => many1Indent($, choice($.struct_explicit_binder,
-    $.struct_implicit_binder, $.struct_inst_binder, $.struct_simple_binder)),
+  struct_fields: $ => many1Indent($, choice($.struct_explicit_binder, $.struct_implicit_binder,
+    $.struct_inst_binder, $.struct_simple_binder)),
   struct_ctor: $ => seq(declModifiers($), $.ident, '::'),
-  struct_parent: $ => seq(optional(seq($.ident, ':')), $.term),
+  struct_parent: $ => seq(optional(seq($.term_ident, ':')), $.term),
   extends: $ => seq('extends', sepBy1($.struct_parent, ','), optType($)),
 
   // Syntax.lean

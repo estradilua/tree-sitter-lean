@@ -14,7 +14,7 @@ export const optType = ($, requireType = false) => requireType ? $.type_spec : o
 
 const terms = {
   term_by: $ => seq('by', $.tactic_seq),
-  term_ident: $ => prec(-10, $.ident),
+  term_ident: $ => $.ident,
   term_num: $ => $.num_lit,
   term_str: $ => $.str_lit,
   term_raw_str: $ => $.raw_str_lit,
@@ -42,8 +42,19 @@ const terms = {
   term_nomatch: $ => prec.right(seq('nomatch', sepBy1($.term, ','))),
   term_nofun: $ => 'nofun',
   // TODO: this is delicate. PUSH_COL messes stuff up.
-  // term_struct_inst: $ => seq('{', optional(seq($._push_col, sepBy1($.term, ','), 'with', $._pop_col)),
-  //   sepByIndent($, $.struct_inst_field, ',', true), optional($.ellipsis), optType($), '}'),
+  term_struct_inst: $ => seq(
+    '{',
+    $._push_col,
+    optional(seq(sepBy1($.term, ','), 'with', $._pop_col, $._push_col)),
+    optional(seq(
+      sepBy1($.struct_inst_field, choice($._eq_col_start, ',')),
+      optional(','),
+    )),
+    optional($.ellipsis),
+    optType($),
+    '}',
+    $._pop_col
+  ),
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
 
   // Notation.lean
@@ -73,15 +84,15 @@ export default {
       '}'
     ))
   ),
-  
-  decl_ident: $ => seq(
+
+  decl_ident: $ => prec(10, seq(
     $.ident,
     optional(seq(
       '.{',
       sepBy1(/[^,}\s]/, ','),
       '}'
     ))
-  ),
+  )),
 
   // symbols
   left_arrow: $ => choice('←', '<-'),
@@ -99,15 +110,15 @@ export default {
   type_spec: $ => seq(':', $.term),
 
   // binders
-  binder_ident: $ => choice(prec(-20, $.ident), $.term_hole),
-  explicit_binder: $ => seq('(', $._o, repeat1($.binder_ident), optType($), ')', $._c),
+  _binder_ident: $ => choice($.term_ident, $.term_hole),
+  explicit_binder: $ => seq('(', $._o, repeat1($._binder_ident), optType($), ')', $._c),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
-    repeat1($.binder_ident),
+    repeat1($._binder_ident),
     optType($),
     choice('}}', '⦄'),
   ),
-  implicit_binder: $ => seq('{', repeat1($.binder_ident), optType($), '}'),
+  implicit_binder: $ => seq('{', repeat1($._binder_ident), optType($), '}'),
   inst_binder: $ => seq('[', optIdent($), $.term, ']'),
   bracketed_binder: $ => choice(
     $.explicit_binder,
@@ -121,17 +132,16 @@ export default {
   match_alts: $ => seq($._match_alts_start, sepBy1($.match_alt, $._match_alt_start), $._dedent),
 
   // match_expr
-  match_expr_pat: $ => seq(optional(seq($.ident, '@')), $.ident, repeat($.binder_ident)),
+  match_expr_pat: $ => seq(optional(seq($.ident, '@')), $.ident, repeat($._binder_ident)),
 
   // let
-  let_id_binder: $ => choice($.binder_ident, $.bracketed_binder),
+  let_id_binder: $ => choice($._binder_ident, $.bracketed_binder),
   let_id_lhs: $ => seq(
-    $.binder_ident,
+    $._binder_ident,
     repeat($.let_id_binder),
     optType($)
   ),
   let_id_decl: $ => seq($.let_id_lhs, $.defeq, $.term),
-  let_id_decl_no_binders: $ => seq($.ident, optType($), $.defeq, $.term),
   let_pat_decl: $ => prec.right(seq($.term, optType($), $.defeq, $.term)),
   let_eqns_decl: $ => seq($.let_id_lhs, $.match_alts),
   let_decl: $ => choice($.let_id_decl, $.let_pat_decl, $.let_eqns_decl),
@@ -146,14 +156,14 @@ export default {
   // where
   where_decls: $ => seq('where', sepBy1IndentSemicolon($, $.let_rec_decl)),
 
-  struct_inst_field: $ => seq(
+  struct_inst_field: $ => prec.right(-10, seq(
     $.ident,
     optional(seq(
       repeat(seq($.let_id_binder)),
       optType($),
       choice(seq($.defeq, $.term), $.match_alts)
     ))
-  ),
+  )),
 
   // have
   have_id_decl: $ => seq(have_id_lhs($), $.defeq, $.term),
@@ -163,12 +173,12 @@ export default {
   // match
   generalizing_param: $ => seq('(', $._o, 'generalizing', $.defeq, choice($.true_val, $.false_val), ')', $._c),
   motive: $ => seq('(', $._o, 'motive', $.defeq, $.term, ')', $._c),
-  match_discr: $ => seq(optional(seq($.binder_ident, ':')), $.term),
+  match_discr: $ => seq(optional(seq($._binder_ident, ':')), $.term),
 
   // suffices
   from_term: $ => seq('from', $.term),
   show_rhs: $ => choice($.from_term, $.term_by),
-  suffices_decl: $ => seq(optional(seq($.binder_ident, ':')), $.term, $.show_rhs),
+  suffices_decl: $ => seq(optional(seq($._binder_ident, ':')), $.term, $.show_rhs),
 
   // fun
   fun_binder: $ => prec(10, choice($.strict_implicit_binder, $.implicit_binder, $.inst_binder, $.term)),
@@ -178,4 +188,4 @@ export default {
   named_argument: $ => seq('(', $._o, $.ident, $.defeq, $.term, ')', $._c),
 }
 
-const have_id_lhs = $ => seq(optional(seq($.binder_ident, repeat($.let_id_binder))), optType($))
+const have_id_lhs = $ => seq(optional(seq($._binder_ident, repeat($.let_id_binder))), optType($))
