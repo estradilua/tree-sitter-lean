@@ -51,7 +51,7 @@ const commands = {
   cmd_export: $ => seq('export', $.ident, '(', repeat1($.ident), ')'),
   cmd_open: $ => seq('open', $._open_decl),
   cmd_mutual: $ => 'mutual',
-  cmd_initialize: $ => prec(100, seq(declModifiers($), choice(/initialize\s/, /builtin_initialize\s/),
+  cmd_initialize: $ => prec(100, seq(declModifiers($), choice('initialize', 'builtin_initialize'),
     // HACK: see comment under POP_COL on scanner.c
     optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq)),
   cmd_in: $ => prec.right(seq($.command, /\sin\s/, $.command)),

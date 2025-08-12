@@ -27,7 +27,7 @@ const do_elems = {
   ),
 
   do_expr: $ => $.term,
-  do_nested: $ => seq(/do\s/, $.do_seq),
+  do_nested: $ => seq('do', $.do_seq),
 }
 
 export default {
