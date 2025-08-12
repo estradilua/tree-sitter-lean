@@ -43,7 +43,7 @@ export default grammar({
     module: $ => seq(
       header($),
       repeat($.command),
-      $._eof,
+      optional($._eof),
     ),
 
     ...modu,
