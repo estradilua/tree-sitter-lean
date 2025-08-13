@@ -45,9 +45,7 @@ initialize foo : Int ← pure ()
                 (term
                   (term_ident
                     (ident))
-                  (term_tuple
-                    (paren_open)
-                    (paren_close))))))
+                  (term_tuple)))))
           (do_seq_item
             (do_elem
               (do_expr
@@ -86,9 +84,7 @@ initialize let foo : Int ← pure ()
                       (term
                         (term_ident
                           (ident))
-                        (term_tuple
-                          (paren_open)
-                          (paren_close)))))))))
+                        (term_tuple))))))))
           (do_seq_item
             (do_elem
               (do_expr
@@ -115,21 +111,22 @@ initialize
         (do_seq_indent
           (do_seq_item
             (do_elem
-              (do_nested
-                (do_seq
-                  (do_seq_indent
-                    (do_seq_item
-                      (do_elem
-                        (do_let
-                          (let_decl
-                            (let_pat_decl
-                              (term
-                                (term_ident
-                                  (ident)))
-                              (defeq)
-                              (term
-                                (term_num
-                                  (num_lit))))))))))))))))))
+              (do_expr
+                (term
+                  (term_do
+                    (do_seq
+                      (do_seq_indent
+                        (do_seq_item
+                          (do_elem
+                            (do_let
+                              (let_decl
+                                (let_id_decl
+                                  (let_id_lhs
+                                    (ident))
+                                  (defeq)
+                                  (term
+                                    (term_num
+                                      (num_lit))))))))))))))))))))
 
 ================
 inductive vacant
@@ -168,30 +165,28 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
           (ident))
         (type_spec
           (term
-            (term_type
-              (level_ident
-                (ident)))
             (term_arrow
-              (right_arrow))
-            (term_type
-              (level_ident
-                (ident)))
-            (term_arrow
-              (right_arrow))
-            (term_type)
-            (term_paren
-              (paren_open)
+              (term_type
+                (level_ident
+                  (ident)))
+              (right_arrow)
               (term
-                (term_ident
-                  (ident))
-                (term_ident
-                  (ident))
-                (term_ident
-                  (ident))
-                (term_other)
-                (term_num
-                  (num_lit)))
-              (paren_close))))
+                (term_arrow
+                  (term_type
+                    (level_ident
+                      (ident)))
+                  (right_arrow)
+                  (term
+                    (term_type
+                      (level_paren
+                        (level_max)
+                        (level_ident
+                          (ident))
+                        (level_ident
+                          (ident))
+                        (level_add)
+                        (level_num
+                          (num_lit))))))))))
         (ctor
           (ident)
           (type_spec
@@ -199,8 +194,7 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
               (term_dep_arrow
                 (bracketed_binder
                   (implicit_binder
-                    (binder_ident
-                      (ident))
+                    (ident)
                     (type_spec
                       (term
                         (term_type
@@ -211,8 +205,7 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
                   (term_dep_arrow
                     (bracketed_binder
                       (implicit_binder
-                        (binder_ident
-                          (ident))
+                        (ident)
                         (type_spec
                           (term
                             (term_type
@@ -220,30 +213,32 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
                                 (ident)))))))
                     (right_arrow)
                     (term
-                      (term_ident
-                        (ident))
                       (term_arrow
-                        (right_arrow))
-                      (term_ident
-                        (ident))
-                      (term_ident
-                        (ident))
-                      (term_ident
-                        (ident)))))))))
+                        (term_ident
+                          (ident))
+                        (right_arrow)
+                        (term
+                          (term_ident
+                            (ident))
+                          (term_ident
+                            (ident))
+                          (term_ident
+                            (ident)))))))))))
         (ctor
           (ident)
           (type_spec
             (term
-              (term_ident
-                (ident))
               (term_arrow
-                (right_arrow))
-              (term_ident
-                (ident))
-              (term_ident
-                (ident))
-              (term_ident
-                (ident)))))))))
+                (term_ident
+                  (ident))
+                (right_arrow)
+                (term
+                  (term_ident
+                    (ident))
+                  (term_ident
+                    (ident))
+                  (term_ident
+                    (ident)))))))))))
 
 ==========================
 definition with match_alts
@@ -265,33 +260,31 @@ def AtLeastOne.head : AtLeastOne α → α
           (term
             (term_ident
               (ident))
-            (term_ident
-              (ident))
             (term_arrow
-              (right_arrow))
-            (term_ident
-              (ident))))
+              (term_ident
+                (ident))
+              (right_arrow)
+              (term
+                (term_ident
+                  (ident))))))
         (decl_val
           (decl_val_eqns
             (match_alts
               (match_alt
                 (term
                   (term_anonymous_ctor
-                    (angle_open)
                     (term
                       (term_ident
                         (ident)))
                     (term
-                      (term_hole))
-                    (angle_close)))
+                      (term_hole))))
                 (darrow)
                 (term
                   (term_ident
                     (ident))))
               (match_alt
                 (term
-                  (term_cdot
-                    (cdot))
+                  (term_other)
                   (term_ident
                     (ident))
                   (term_ident
@@ -355,7 +348,6 @@ example : True := by
                         (ident)
                         (term
                           (term_paren
-                            (paren_open)
                             (term
                               (term_by
                                 (tactic_seq
@@ -370,8 +362,7 @@ example : True := by
                                             (ident)))))
                                     (tactic_p
                                       (tactic_other
-                                        (ident)))))))
-                            (paren_close)))))
+                                        (ident)))))))))))
                     (tactic_p
                       (tactic_other
                         (ident)))))))))))))
@@ -408,7 +399,6 @@ example : True := by
                         (ident)
                         (term
                           (term_paren
-                            (paren_open)
                             (term
                               (term_by
                                 (tactic_seq
@@ -423,8 +413,7 @@ example : True := by
                                             (ident)))))
                                     (tactic_p
                                       (tactic_other
-                                        (ident)))))))
-                            (paren_close)))))
+                                        (ident)))))))))))
                     (tactic_p
                       (tactic_other
                         (ident)))))))))))))
@@ -457,20 +446,18 @@ end CategoryTheory
             (term_ident
               (ident))
             (term_ident
-              (ident
-                (level_ident
-                  (ident))))))
+              (ident)
+              (level_ident
+                (ident)))))
         (decl_val
           (where_struct_inst
             (struct_inst_field
               (ident)
-              (let_id_binder
-                (binder_ident
-                  (ident)))
+              (binder
+                (ident))
               (defeq)
               (term
                 (term_anonymous_ctor
-                  (angle_open)
                   (term
                     (term_ident
                       (ident))
@@ -526,11 +513,9 @@ end CategoryTheory
                                       (ident)
                                       (term
                                         (term_anonymous_ctor
-                                          (angle_open)
                                           (term
                                             (term_ident
-                                              (ident)))
-                                          (angle_close)))))
+                                              (ident)))))))
                                   (tactic_p
                                     (tactic_other
                                       (ident)
@@ -539,8 +524,7 @@ end CategoryTheory
                                           (ident)))))
                                   (tactic_p
                                     (tactic_other
-                                      (ident)))))))))))
-                  (angle_close)))))))))
+                                      (ident)))))))))))))))))))
   (command
     (cmd_end
       (ident))))
@@ -567,16 +551,18 @@ example : Foo := by
           (ident)
           (type_spec
             (term
-              (term_ident
-                (ident))
               (term_arrow
-                (right_arrow))
-              (term_ident
-                (ident))
-              (term_arrow
-                (right_arrow))
-              (term_ident
-                (ident))))))))
+                (term_ident
+                  (ident))
+                (right_arrow)
+                (term
+                  (term_arrow
+                    (term_ident
+                      (ident))
+                    (right_arrow)
+                    (term
+                      (term_ident
+                        (ident))))))))))))
   (command
     (cmd_declaration
       (example
@@ -596,7 +582,6 @@ example : Foo := by
                         (ident)
                         (term
                           (term_anonymous_ctor
-                            (angle_open)
                             (term
                               (term_by
                                 (tactic_seq
@@ -616,9 +601,7 @@ example : Foo := by
                                         (ident)
                                         (term
                                           (term_num
-                                            (num_lit)))))))))
-                            (angle_close)))))))))))))))
-
+                                            (num_lit)))))))))))))))))))))))
 
 ================
 linearmap.defs 1
@@ -634,6 +617,8 @@ instance (priority := 100) instAddMonoidHomClass [FunLike F M M₃] [SemilinearM
 
 ---
 
+
+
 ===================
 weird struct binder
 ===================
@@ -642,6 +627,36 @@ structure Bar where
   (bar baz (a : Nat) b : Nat := a + b)
 
 ---
+
+(module
+  (command
+    (cmd_declaration
+      (structure
+        (decl_ident
+          (ident))
+        (struct_fields
+          (struct_explicit_binder
+            (ident)
+            (ident)
+            (bracketed_binder
+              (explicit_binder
+                (ident)
+                (type_spec
+                  (term
+                    (term_ident
+                      (ident))))))
+            (ident)
+            (type_spec
+              (term
+                (term_ident
+                  (ident))))
+            (defeq)
+            (term
+              (term_ident
+                (ident))
+              (term_other)
+              (term_ident
+                (ident)))))))))
 
 ========================
 struct_inst empty fields
@@ -654,6 +669,7 @@ def Foo (a b : Bar) : Bar := {a, b with}
 ---
 
 
+
 =======================
 cursed type ascriptions
 =======================
@@ -661,3 +677,23 @@ cursed type ascriptions
 #check (by obtain : True : True)
 
 ---
+
+(module
+  (command
+    (cmd_hash
+      (term
+        (term_paren
+          (term
+            (term_by
+              (tactic_seq
+                (tactic_seq_indented
+                  (tactic_p
+                    (tactic_other
+                      (ident)
+                      (term
+                        (term_other)
+                        (term_ident
+                          (ident))
+                        (term_other)
+                        (term_ident
+                          (ident))))))))))))))
