@@ -14,6 +14,7 @@ export const optType = ($, requireType = false) => requireType ? $.type_spec : o
 
 const terms = {
   term_by: $ => seq('by', $.tactic_seq),
+  term_do: $ => seq('do', $.do_seq),
   term_ident: $ => seq($.ident, optional($._ident_univ)),
   term_num: $ => $.num_lit,
   term_str: $ => $.str_lit,
