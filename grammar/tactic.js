@@ -32,6 +32,6 @@ export default {
   tactic_p: $ => oneOf($, tactics),
 
   tactic_seq_indented: $ => sepBy1IndentSemicolon($, $.tactic_p),
-  tactic_seq_bracketed: $ => seq('{', sepByIndentSemicolon($, $.tactic_p), '}'),
+  tactic_seq_bracketed: $ => seq('{', optional($.tactic_seq_indented), '}'),
   tactic_seq: $ => choice($.tactic_seq_indented, $.tactic_seq_bracketed),
 }
