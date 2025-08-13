@@ -97,7 +97,7 @@ export default {
   type_spec: $ => seq(':', $.term),
 
   // binders
-  _binder_ident: $ => choice($.term_ident, $.term_hole),
+  _binder_ident: $ => choice($.ident, $.term_hole),
   explicit_binder: $ => seq('(', $._o, repeat1($._binder_ident), optType($), ')', $._c),
   strict_implicit_binder: $ => seq(
     choice('{{', '⦃'),
