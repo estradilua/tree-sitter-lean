@@ -11,8 +11,8 @@ import { attrKind } from "./attr.js";
 import { optType } from "./term.js";
 import { many1Indent, manyIndent, oneOf, sepBy1, sepByIndentSemicolon } from "./util.js";
 
-const declSig = $ => seq(repeat(choice($._binder_ident, $.bracketed_binder)), $.type_spec)
-const optDeclSig = $ => seq(repeat(choice($._binder_ident, $.bracketed_binder)), optType($))
+const declSig = $ => seq(repeat($.binder), $.type_spec)
+const optDeclSig = $ => seq(repeat($.binder), optType($))
 
 const declModifiers = $ => seq(
   optional($.documentation),

@@ -113,6 +113,7 @@ export default {
     $.implicit_binder,
     $.inst_binder
   ),
+  binder: $ => choice($._binder_ident, $.bracketed_binder),
 
   // match_alt
   match_alt: $ => seq('|', sepBy1(sepBy1($.term, ','), '|'), $.darrow, $.term),
@@ -122,10 +123,9 @@ export default {
   match_expr_pat: $ => seq(optional(seq($.ident, '@')), $.ident, repeat($._binder_ident)),
 
   // let
-  let_id_binder: $ => choice($._binder_ident, $.bracketed_binder),
   let_id_lhs: $ => seq(
     $._binder_ident,
-    repeat($.let_id_binder),
+    repeat($.binder),
     optType($)
   ),
   let_id_decl: $ => seq($.let_id_lhs, $.defeq, $.term),
@@ -146,7 +146,7 @@ export default {
   struct_inst_field: $ => seq(
     $.ident,
     optional(seq(
-      repeat(seq($.let_id_binder)),
+      repeat($.binder),
       optType($),
       choice(seq($.defeq, $.term), $.match_alts)
     ))
@@ -175,4 +175,4 @@ export default {
   named_argument: $ => seq('(', $._o, $.ident, $.defeq, $.term, ')', $._c),
 }
 
-const have_id_lhs = $ => seq(optional(seq($._binder_ident, repeat($.let_id_binder))), optType($))
+const have_id_lhs = $ => seq(optional(seq($._binder_ident, repeat($.binder))), optType($))
