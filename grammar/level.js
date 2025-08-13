@@ -12,15 +12,15 @@ import { oneOf } from "./util.js"
 
 const levels = {
   level_paren: $ => seq('(', $._level, ')'),
-  level_max: $ => prec.right(seq('max', repeat1($._level))),
-  level_imax: $ => prec.right(seq('imax', repeat1($._level))),
+  level_max: $ => 'max',
+  level_imax: $ => 'imax',
   level_hole: $ => '_',
   level_num: $ => $.num_lit,
   level_ident: $ => $.ident,
-  level_add_lit: $ => prec(-10, seq($._level, '+', $.num_lit)),
+  level_add: $ => '+',
 }
 
 export default {
   ...levels,
-  _level: $ => oneOf($, levels),
+  _level: $ => repeat1(oneOf($, levels)),
 }
