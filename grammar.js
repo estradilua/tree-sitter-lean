@@ -61,4 +61,12 @@ export default grammar({
   },
 
   extras: $ => [/[\s\n]+/, $.comment, $.line_comment],
+
+  conflicts: $ => [
+    [$.term_1, $._binder_ident],
+    [$.decl_ident, $._binder_ident],
+    [$.term_ident, $._binder_ident],
+    [$.term_ident, $.struct_parent],
+    [$.cmd_initialize, $.term_ident, $._binder_ident],
+  ],
 });
