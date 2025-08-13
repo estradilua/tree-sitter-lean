@@ -35,8 +35,6 @@ const terms = {
   term_show: $ => seq('show', $.term, $.show_rhs),
   term_explicit: $ => prec(10, seq('@', $.term)),
   term_inaccessible: $ => seq('.(', $.term, ')'),
-  term_dep_arrow: $ => prec.right(seq($.bracketed_binder, $.right_arrow, $.term)),
-  term_arrow: $ => $.right_arrow,
   term_forall: $ => seq($.forall, repeat1($.let_id_binder), optType($), ',', $.term),
   term_match: $ => seq('match', optional($.generalizing_param), optional($.motive), sepBy1($.match_discr, ','), 'with', $.match_alts),
   term_nomatch: $ => prec.right(seq('nomatch', sepBy1($.term, ','))),
@@ -56,8 +54,14 @@ const terms = {
     $._pop_col
   ),
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
+  term_arrow: $ => prec(5, seq($._term_1, $.right_arrow, $.term)),
+  term_dep_arrow: $ => seq($.bracketed_binder, $.right_arrow, $.term),
+  term_explicit: $ => prec(10, seq('@', $._term_1)),
 
-  // Notation.lean
+  term_type_ascription: $ => seq('(', $._o, $.term, ':', optional($.term), ')', $._c),
+  term_tuple: $ => seq('(', $._o, optional(seq($.term, ',', $._terms_comma)), ')', $._c),
+
+  term_anonymous_ctor: $ => seq('⟨', $._o, optional($._terms_comma), '⟩', $._c),
   term_list: $ => seq('[', $._o, optional($._terms_comma), ']', $._c),
 
   term_other: $ => /[^\s[[_\pL]--λΠΣ]]/,
@@ -65,7 +69,10 @@ const terms = {
 
 export default {
   ...terms,
-  term: $ => prec.left(repeat1(prec(-10, oneOf($, terms)))),
+  term: $ => prec.right(repeat1($._term_1)),
+
+  _term_1: $ => oneOf($, terms),
+  _terms_comma: $ => sepBy1($.term, ',', true),
 
   // see identFnAux on Basic.lean
   ident: $ => /(?:(?:[[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*|«[^»]+»)(?:\.(?:[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*|«[^»]+»|[0-9]+))*/,
@@ -91,7 +98,7 @@ export default {
   true_val: $ => 'true',
   false_val: $ => 'false',
   ellipsis: $ => '..',
-  lambda: $ => choice(/λ\s/, /fun\s/),
+  lambda: $ => seq(choice('λ', 'fun'), token.immediate(/\s/)),
   cdot: $ => choice('·', '.'),
 
   type_spec: $ => seq(':', $.term),
@@ -105,7 +112,7 @@ export default {
     optType($),
     choice('}}', '⦄'),
   ),
-  implicit_binder: $ => seq('{', repeat1($._binder_ident), optType($), '}'),
+  implicit_binder: $ => seq('{', $._o, repeat1($._binder_ident), optType($), '}', $._c),
   inst_binder: $ => seq('[', optIdent($), $.term, ']'),
   bracketed_binder: $ => choice(
     $.explicit_binder,

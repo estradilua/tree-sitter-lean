@@ -26,7 +26,6 @@ export const sepBy1Indent = ($, p, sep, trailing = false) => trailing ?
 
 export const sepByIndent = ($, p, sep, trailing = false) => optional(sepBy1Indent($, p, sep, trailing))
 
-
 export const sepByIndentSemicolon = ($, p) => sepByIndent($, p, ';', true)
 export const sepBy1IndentSemicolon = ($, p) => sepBy1Indent($, p, ';', true)
 

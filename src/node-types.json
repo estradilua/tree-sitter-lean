@@ -8,11 +8,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -145,42 +141,11 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
           "type": "decl_ident",
-          "named": true
-        },
-        {
-          "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "basic_fun",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "fun_arrow",
-          "named": true
-        },
-        {
-          "type": "fun_binder",
-          "named": true
-        },
-        {
-          "type": "term",
           "named": true
         },
         {
@@ -210,13 +175,17 @@
     }
   },
   {
-    "type": "binder_ident",
+    "type": "binder",
     "named": true,
     "fields": {},
     "children": {
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "bracketed_binder",
+          "named": true
+        },
         {
           "type": "ident",
           "named": true
@@ -293,11 +262,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -352,36 +317,6 @@
         },
         {
           "type": "ident",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_check",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_check_failure",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
           "named": true
         }
       ]
@@ -485,36 +420,6 @@
     }
   },
   {
-    "type": "cmd_eval",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_eval_bang",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cmd_export",
     "named": true,
     "fields": {},
@@ -539,6 +444,21 @@
       "types": [
         {
           "type": "ident",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cmd_hash",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "term",
           "named": true
         }
       ]
@@ -842,60 +762,6 @@
     }
   },
   {
-    "type": "cmd_print",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "ident",
-          "named": true
-        },
-        {
-          "type": "str_lit",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_print_axioms",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "ident",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_print_eqns",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "ident",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cmd_print_tac_tags",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "cmd_recommended_spelling",
     "named": true,
     "fields": {},
@@ -1023,21 +889,6 @@
     }
   },
   {
-    "type": "cmd_synth",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cmd_tactic_extension",
     "named": true,
     "fields": {},
@@ -1103,14 +954,6 @@
           "named": true
         },
         {
-          "type": "cmd_check",
-          "named": true
-        },
-        {
-          "type": "cmd_check_failure",
-          "named": true
-        },
-        {
           "type": "cmd_declaration",
           "named": true
         },
@@ -1123,23 +966,15 @@
           "named": true
         },
         {
-          "type": "cmd_eval",
-          "named": true
-        },
-        {
-          "type": "cmd_eval_bang",
-          "named": true
-        },
-        {
-          "type": "cmd_exit",
-          "named": true
-        },
-        {
           "type": "cmd_export",
           "named": true
         },
         {
           "type": "cmd_gen_injective_theorems",
+          "named": true
+        },
+        {
+          "type": "cmd_hash",
           "named": true
         },
         {
@@ -1195,22 +1030,6 @@
           "named": true
         },
         {
-          "type": "cmd_print",
-          "named": true
-        },
-        {
-          "type": "cmd_print_axioms",
-          "named": true
-        },
-        {
-          "type": "cmd_print_eqns",
-          "named": true
-        },
-        {
-          "type": "cmd_print_tac_tags",
-          "named": true
-        },
-        {
           "type": "cmd_recommended_spelling",
           "named": true
         },
@@ -1231,10 +1050,6 @@
           "named": true
         },
         {
-          "type": "cmd_synth",
-          "named": true
-        },
-        {
           "type": "cmd_tactic_extension",
           "named": true
         },
@@ -1245,14 +1060,6 @@
         {
           "type": "cmd_variable",
           "named": true
-        },
-        {
-          "type": "cmd_version",
-          "named": true
-        },
-        {
-          "type": "cmd_where",
-          "named": true
         }
       ]
     }
@@ -1260,6 +1067,7 @@
   {
     "type": "comment",
     "named": true,
+    "extra": true,
     "fields": {},
     "children": {
       "multiple": false,
@@ -1300,11 +1108,7 @@
           "named": true
         },
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -1329,11 +1133,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "darrow",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "decl_deriving",
@@ -1439,11 +1238,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -1510,10 +1305,6 @@
           "named": true
         },
         {
-          "type": "do_nested",
-          "named": true
-        },
-        {
           "type": "do_reassign",
           "named": true
         },
@@ -1572,6 +1363,10 @@
         },
         {
           "type": "left_arrow",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -1842,21 +1637,6 @@
     }
   },
   {
-    "type": "do_nested",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "do_seq",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "do_pat_decl",
     "named": true,
     "fields": {},
@@ -1895,10 +1675,6 @@
       "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "let_id_decl_no_binders",
-          "named": true
-        },
         {
           "type": "let_pat_decl",
           "named": true
@@ -2013,11 +1789,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -2040,7 +1812,11 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -2092,58 +1868,6 @@
     "type": "false_val",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "forall",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "from_term",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "fun_arrow",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "fun_binder",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "implicit_binder",
-          "named": true
-        },
-        {
-          "type": "inst_binder",
-          "named": true
-        },
-        {
-          "type": "strict_implicit_binder",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "generalizing_param",
@@ -2200,15 +1924,19 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "binder",
           "named": true
         },
         {
-          "type": "let_id_binder",
+          "type": "ident",
           "named": true
         },
         {
           "type": "match_alts",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -2227,7 +1955,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "binder",
           "named": true
         },
         {
@@ -2235,7 +1963,7 @@
           "named": true
         },
         {
-          "type": "let_id_binder",
+          "type": "ident",
           "named": true
         },
         {
@@ -2243,46 +1971,11 @@
           "named": true
         },
         {
+          "type": "term_hole",
+          "named": true
+        },
+        {
           "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "ident",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "level_add_lit",
-          "named": true
-        },
-        {
-          "type": "level_hole",
-          "named": true
-        },
-        {
-          "type": "level_ident",
-          "named": true
-        },
-        {
-          "type": "level_imax",
-          "named": true
-        },
-        {
-          "type": "level_max",
-          "named": true
-        },
-        {
-          "type": "level_num",
-          "named": true
-        },
-        {
-          "type": "level_paren",
           "named": true
         }
       ]
@@ -2297,7 +1990,11 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -2331,11 +2028,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -2393,11 +2086,7 @@
           "named": true
         },
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -2437,11 +2126,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "lambda",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "left_arrow",
@@ -2491,25 +2175,6 @@
     }
   },
   {
-    "type": "let_id_binder",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "let_id_decl",
     "named": true,
     "fields": {},
@@ -2533,33 +2198,6 @@
     }
   },
   {
-    "type": "let_id_decl_no_binders",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "defeq",
-          "named": true
-        },
-        {
-          "type": "ident",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        },
-        {
-          "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "let_id_lhs",
     "named": true,
     "fields": {},
@@ -2568,11 +2206,15 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "binder",
           "named": true
         },
         {
-          "type": "let_id_binder",
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -2644,49 +2286,6 @@
     }
   },
   {
-    "type": "level_add_lit",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "level_add_lit",
-          "named": true
-        },
-        {
-          "type": "level_hole",
-          "named": true
-        },
-        {
-          "type": "level_ident",
-          "named": true
-        },
-        {
-          "type": "level_imax",
-          "named": true
-        },
-        {
-          "type": "level_max",
-          "named": true
-        },
-        {
-          "type": "level_num",
-          "named": true
-        },
-        {
-          "type": "level_paren",
-          "named": true
-        },
-        {
-          "type": "num_lit",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "level_hole",
     "named": true,
     "fields": {}
@@ -2701,84 +2300,6 @@
       "types": [
         {
           "type": "ident",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "level_imax",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "level_add_lit",
-          "named": true
-        },
-        {
-          "type": "level_hole",
-          "named": true
-        },
-        {
-          "type": "level_ident",
-          "named": true
-        },
-        {
-          "type": "level_imax",
-          "named": true
-        },
-        {
-          "type": "level_max",
-          "named": true
-        },
-        {
-          "type": "level_num",
-          "named": true
-        },
-        {
-          "type": "level_paren",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "level_max",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "level_add_lit",
-          "named": true
-        },
-        {
-          "type": "level_hole",
-          "named": true
-        },
-        {
-          "type": "level_ident",
-          "named": true
-        },
-        {
-          "type": "level_imax",
-          "named": true
-        },
-        {
-          "type": "level_max",
-          "named": true
-        },
-        {
-          "type": "level_num",
-          "named": true
-        },
-        {
-          "type": "level_paren",
           "named": true
         }
       ]
@@ -2804,11 +2325,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "level_add_lit",
+          "type": "level_add",
           "named": true
         },
         {
@@ -2881,11 +2402,15 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "ident",
           "named": true
         },
         {
           "type": "term",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         }
       ]
@@ -2900,11 +2425,11 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "ident",
           "named": true
         },
         {
-          "type": "ident",
+          "type": "term_hole",
           "named": true
         }
       ]
@@ -3008,6 +2533,11 @@
     }
   },
   {
+    "type": "noncomputable",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "notation_item",
     "named": true,
     "fields": {},
@@ -3044,11 +2574,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -3230,25 +2756,6 @@
     }
   },
   {
-    "type": "show_rhs",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "from_term",
-          "named": true
-        },
-        {
-          "type": "term_by",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "str_lit",
     "named": true,
     "fields": {}
@@ -3262,7 +2769,11 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
+          "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         },
         {
@@ -3312,14 +2823,6 @@
       "required": true,
       "types": [
         {
-          "type": "attributes",
-          "named": true
-        },
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
           "type": "bracketed_binder",
           "named": true
         },
@@ -3328,15 +2831,7 @@
           "named": true
         },
         {
-          "type": "documentation",
-          "named": true
-        },
-        {
           "type": "ident",
-          "named": true
-        },
-        {
-          "type": "noncomputable",
           "named": true
         },
         {
@@ -3344,11 +2839,11 @@
           "named": true
         },
         {
-          "type": "type_spec",
+          "type": "term_hole",
           "named": true
         },
         {
-          "type": "visibility",
+          "type": "type_spec",
           "named": true
         }
       ]
@@ -3362,6 +2857,18 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "attributes",
+          "named": true
+        },
+        {
+          "type": "documentation",
+          "named": true
+        },
+        {
+          "type": "noncomputable",
+          "named": true
+        },
         {
           "type": "struct_explicit_binder",
           "named": true
@@ -3377,6 +2884,10 @@
         {
           "type": "struct_simple_binder",
           "named": true
+        },
+        {
+          "type": "visibility",
+          "named": true
         }
       ]
     }
@@ -3390,19 +2901,7 @@
       "required": true,
       "types": [
         {
-          "type": "attributes",
-          "named": true
-        },
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
           "type": "bracketed_binder",
-          "named": true
-        },
-        {
-          "type": "documentation",
           "named": true
         },
         {
@@ -3410,15 +2909,11 @@
           "named": true
         },
         {
-          "type": "noncomputable",
+          "type": "term_hole",
           "named": true
         },
         {
           "type": "type_spec",
-          "named": true
-        },
-        {
-          "type": "visibility",
           "named": true
         }
       ]
@@ -3433,19 +2928,7 @@
       "required": true,
       "types": [
         {
-          "type": "attributes",
-          "named": true
-        },
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
           "type": "bracketed_binder",
-          "named": true
-        },
-        {
-          "type": "documentation",
           "named": true
         },
         {
@@ -3453,15 +2936,11 @@
           "named": true
         },
         {
-          "type": "noncomputable",
+          "type": "term_hole",
           "named": true
         },
         {
           "type": "type_spec",
-          "named": true
-        },
-        {
-          "type": "visibility",
           "named": true
         }
       ]
@@ -3476,15 +2955,15 @@
       "required": true,
       "types": [
         {
+          "type": "binder",
+          "named": true
+        },
+        {
           "type": "defeq",
           "named": true
         },
         {
           "type": "ident",
-          "named": true
-        },
-        {
-          "type": "let_id_binder",
           "named": true
         },
         {
@@ -3530,15 +3009,7 @@
       "required": true,
       "types": [
         {
-          "type": "attributes",
-          "named": true
-        },
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -3546,15 +3017,7 @@
           "named": true
         },
         {
-          "type": "documentation",
-          "named": true
-        },
-        {
           "type": "ident",
-          "named": true
-        },
-        {
-          "type": "noncomputable",
           "named": true
         },
         {
@@ -3563,10 +3026,6 @@
         },
         {
           "type": "type_spec",
-          "named": true
-        },
-        {
-          "type": "visibility",
           "named": true
         }
       ]
@@ -3606,29 +3065,6 @@
         },
         {
           "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "suffices_decl",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "show_rhs",
-          "named": true
-        },
-        {
-          "type": "term",
           "named": true
         }
       ]
@@ -3889,11 +3325,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "tactic_p",
+          "type": "tactic_seq_indented",
           "named": true
         }
       ]
@@ -3962,10 +3398,6 @@
           "named": true
         },
         {
-          "type": "term_cdot",
-          "named": true
-        },
-        {
           "type": "term_char",
           "named": true
         },
@@ -3974,15 +3406,11 @@
           "named": true
         },
         {
+          "type": "term_do",
+          "named": true
+        },
+        {
           "type": "term_explicit",
-          "named": true
-        },
-        {
-          "type": "term_forall",
-          "named": true
-        },
-        {
-          "type": "term_fun",
           "named": true
         },
         {
@@ -3994,23 +3422,7 @@
           "named": true
         },
         {
-          "type": "term_inaccessible",
-          "named": true
-        },
-        {
           "type": "term_list",
-          "named": true
-        },
-        {
-          "type": "term_match",
-          "named": true
-        },
-        {
-          "type": "term_nofun",
-          "named": true
-        },
-        {
-          "type": "term_nomatch",
           "named": true
         },
         {
@@ -4034,27 +3446,11 @@
           "named": true
         },
         {
-          "type": "term_show",
-          "named": true
-        },
-        {
           "type": "term_sorry",
           "named": true
         },
         {
-          "type": "term_sort",
-          "named": true
-        },
-        {
           "type": "term_str",
-          "named": true
-        },
-        {
-          "type": "term_struct_inst",
-          "named": true
-        },
-        {
-          "type": "term_suffices",
           "named": true
         },
         {
@@ -4100,11 +3496,103 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "right_arrow",
+          "named": true
+        },
+        {
+          "type": "term",
+          "named": true
+        },
+        {
+          "type": "term_anonymous_ctor",
+          "named": true
+        },
+        {
+          "type": "term_arrow",
+          "named": true
+        },
+        {
+          "type": "term_by",
+          "named": true
+        },
+        {
+          "type": "term_char",
+          "named": true
+        },
+        {
+          "type": "term_dep_arrow",
+          "named": true
+        },
+        {
+          "type": "term_do",
+          "named": true
+        },
+        {
+          "type": "term_explicit",
+          "named": true
+        },
+        {
+          "type": "term_hole",
+          "named": true
+        },
+        {
+          "type": "term_ident",
+          "named": true
+        },
+        {
+          "type": "term_list",
+          "named": true
+        },
+        {
+          "type": "term_num",
+          "named": true
+        },
+        {
+          "type": "term_other",
+          "named": true
+        },
+        {
+          "type": "term_paren",
+          "named": true
+        },
+        {
+          "type": "term_prop",
+          "named": true
+        },
+        {
+          "type": "term_raw_str",
+          "named": true
+        },
+        {
+          "type": "term_sorry",
+          "named": true
+        },
+        {
+          "type": "term_str",
+          "named": true
+        },
+        {
+          "type": "term_synthetic_hole",
+          "named": true
+        },
+        {
+          "type": "term_tuple",
+          "named": true
+        },
+        {
+          "type": "term_type",
+          "named": true
+        },
+        {
+          "type": "term_type_ascription",
+          "named": true
+        },
+        {
+          "type": "term_type_star",
           "named": true
         }
       ]
@@ -4120,21 +3608,6 @@
       "types": [
         {
           "type": "tactic_seq",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_cdot",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cdot",
           "named": true
         }
       ]
@@ -4179,6 +3652,21 @@
     }
   },
   {
+    "type": "term_do",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "do_seq",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "term_explicit",
     "named": true,
     "fields": {},
@@ -4187,57 +3675,91 @@
       "required": true,
       "types": [
         {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_forall",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "forall",
+          "type": "term_anonymous_ctor",
           "named": true
         },
         {
-          "type": "let_id_binder",
+          "type": "term_arrow",
           "named": true
         },
         {
-          "type": "term",
+          "type": "term_by",
           "named": true
         },
         {
-          "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_fun",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "basic_fun",
+          "type": "term_char",
           "named": true
         },
         {
-          "type": "lambda",
+          "type": "term_dep_arrow",
           "named": true
         },
         {
-          "type": "match_alts",
+          "type": "term_do",
+          "named": true
+        },
+        {
+          "type": "term_explicit",
+          "named": true
+        },
+        {
+          "type": "term_hole",
+          "named": true
+        },
+        {
+          "type": "term_ident",
+          "named": true
+        },
+        {
+          "type": "term_list",
+          "named": true
+        },
+        {
+          "type": "term_num",
+          "named": true
+        },
+        {
+          "type": "term_other",
+          "named": true
+        },
+        {
+          "type": "term_paren",
+          "named": true
+        },
+        {
+          "type": "term_prop",
+          "named": true
+        },
+        {
+          "type": "term_raw_str",
+          "named": true
+        },
+        {
+          "type": "term_sorry",
+          "named": true
+        },
+        {
+          "type": "term_str",
+          "named": true
+        },
+        {
+          "type": "term_synthetic_hole",
+          "named": true
+        },
+        {
+          "type": "term_tuple",
+          "named": true
+        },
+        {
+          "type": "term_type",
+          "named": true
+        },
+        {
+          "type": "term_type_ascription",
+          "named": true
+        },
+        {
+          "type": "term_type_star",
           "named": true
         }
       ]
@@ -4253,26 +3775,39 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "ident",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_inaccessible",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
-          "type": "term",
+          "type": "level_add",
+          "named": true
+        },
+        {
+          "type": "level_hole",
+          "named": true
+        },
+        {
+          "type": "level_ident",
+          "named": true
+        },
+        {
+          "type": "level_imax",
+          "named": true
+        },
+        {
+          "type": "level_max",
+          "named": true
+        },
+        {
+          "type": "level_num",
+          "named": true
+        },
+        {
+          "type": "level_paren",
           "named": true
         }
       ]
@@ -4285,48 +3820,6 @@
     "children": {
       "multiple": true,
       "required": false,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_match",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "generalizing_param",
-          "named": true
-        },
-        {
-          "type": "match_alts",
-          "named": true
-        },
-        {
-          "type": "match_discr",
-          "named": true
-        },
-        {
-          "type": "motive",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_nomatch",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
       "types": [
         {
           "type": "term",
@@ -4381,64 +3874,6 @@
     }
   },
   {
-    "type": "term_show",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "show_rhs",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_sort",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "level_add_lit",
-          "named": true
-        },
-        {
-          "type": "level_hole",
-          "named": true
-        },
-        {
-          "type": "level_ident",
-          "named": true
-        },
-        {
-          "type": "level_imax",
-          "named": true
-        },
-        {
-          "type": "level_max",
-          "named": true
-        },
-        {
-          "type": "level_num",
-          "named": true
-        },
-        {
-          "type": "level_paren",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "term_str",
     "named": true,
     "fields": {},
@@ -4454,61 +3889,19 @@
     }
   },
   {
-    "type": "term_struct_inst",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "ellipsis",
-          "named": true
-        },
-        {
-          "type": "struct_inst_field",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        },
-        {
-          "type": "type_spec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "term_suffices",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "suffices_decl",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "term_synthetic_hole",
     "named": true,
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "ident",
+          "named": true
+        },
+        {
+          "type": "term_hole",
           "named": true
         }
       ]
@@ -4534,11 +3927,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
-          "type": "level_add_lit",
+          "type": "level_add",
           "named": true
         },
         {
@@ -4592,11 +3985,7 @@
       "required": true,
       "types": [
         {
-          "type": "binder_ident",
-          "named": true
-        },
-        {
-          "type": "bracketed_binder",
+          "type": "binder",
           "named": true
         },
         {
@@ -4701,30 +4090,6 @@
     "named": false
   },
   {
-    "type": "#check",
-    "named": false
-  },
-  {
-    "type": "#check_failure",
-    "named": false
-  },
-  {
-    "type": "#eval",
-    "named": false
-  },
-  {
-    "type": "#eval!",
-    "named": false
-  },
-  {
-    "type": "#print",
-    "named": false
-  },
-  {
-    "type": "#synth",
-    "named": false
-  },
-  {
     "type": "&",
     "named": false
   },
@@ -4738,10 +4103,6 @@
   },
   {
     "type": ")",
-    "named": false
-  },
-  {
-    "type": "+",
     "named": false
   },
   {
@@ -4762,10 +4123,6 @@
   },
   {
     "type": ".",
-    "named": false
-  },
-  {
-    "type": ".(",
     "named": false
   },
   {
@@ -4798,10 +4155,6 @@
   },
   {
     "type": "<-",
-    "named": false
-  },
-  {
-    "type": "=>",
     "named": false
   },
   {
@@ -4869,7 +4222,7 @@
     "named": false
   },
   {
-    "type": "axioms",
+    "type": "builtin_initialize",
     "named": false
   },
   {
@@ -4881,10 +4234,6 @@
     "named": false
   },
   {
-    "type": "cmd_exit",
-    "named": true
-  },
-  {
     "type": "cmd_init_quot",
     "named": true
   },
@@ -4893,15 +4242,11 @@
     "named": true
   },
   {
-    "type": "cmd_version",
-    "named": true
-  },
-  {
-    "type": "cmd_where",
-    "named": true
-  },
-  {
     "type": "comment_body",
+    "named": true
+  },
+  {
+    "type": "darrow",
     "named": true
   },
   {
@@ -4917,19 +4262,11 @@
     "named": false
   },
   {
-    "type": "ellipsis",
-    "named": true
+    "type": "do",
+    "named": false
   },
   {
     "type": "end",
-    "named": false
-  },
-  {
-    "type": "eqns",
-    "named": false
-  },
-  {
-    "type": "equations",
     "named": false
   },
   {
@@ -4957,14 +4294,6 @@
     "named": false
   },
   {
-    "type": "forall",
-    "named": false
-  },
-  {
-    "type": "from",
-    "named": false
-  },
-  {
     "type": "gen_injective_theorems%",
     "named": false
   },
@@ -4989,11 +4318,11 @@
     "named": false
   },
   {
-    "type": "if",
-    "named": false
+    "type": "ident",
+    "named": true
   },
   {
-    "type": "imax",
+    "type": "if",
     "named": false
   },
   {
@@ -5025,6 +4354,10 @@
     "named": false
   },
   {
+    "type": "initialize",
+    "named": false
+  },
+  {
     "type": "inline",
     "named": false
   },
@@ -5053,6 +4386,18 @@
     "named": false
   },
   {
+    "type": "level_add",
+    "named": true
+  },
+  {
+    "type": "level_imax",
+    "named": true
+  },
+  {
+    "type": "level_max",
+    "named": true
+  },
+  {
     "type": "line_comment",
     "named": true,
     "extra": true
@@ -5063,10 +4408,6 @@
   },
   {
     "type": "match",
-    "named": false
-  },
-  {
-    "type": "max",
     "named": false
   },
   {
@@ -5088,14 +4429,6 @@
   {
     "type": "namespace",
     "named": false
-  },
-  {
-    "type": "nomatch",
-    "named": false
-  },
-  {
-    "type": "noncomputable",
-    "named": true
   },
   {
     "type": "noncomputable",
@@ -5146,6 +4479,10 @@
     "named": false
   },
   {
+    "type": "protected",
+    "named": false
+  },
+  {
     "type": "rec",
     "named": false
   },
@@ -5182,10 +4519,6 @@
     "named": false
   },
   {
-    "type": "show",
-    "named": false
-  },
-  {
     "type": "str_content",
     "named": true
   },
@@ -5194,24 +4527,12 @@
     "named": false
   },
   {
-    "type": "suffices",
-    "named": false
-  },
-  {
-    "type": "tactic",
+    "type": "syntax",
     "named": false
   },
   {
     "type": "tactic_extension",
     "named": false
-  },
-  {
-    "type": "tags",
-    "named": false
-  },
-  {
-    "type": "term_nofun",
-    "named": true
   },
   {
     "type": "term_other",
@@ -5291,14 +4612,6 @@
   },
   {
     "type": "→",
-    "named": false
-  },
-  {
-    "type": "↦",
-    "named": false
-  },
-  {
-    "type": "∀",
     "named": false
   },
   {
