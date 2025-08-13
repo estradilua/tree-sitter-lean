@@ -68,15 +68,7 @@ export default {
   term: $ => prec.left(repeat1(prec(-10, oneOf($, terms)))),
 
   // see identFnAux on Basic.lean
-  ident: $ => seq($._ident_first, repeat($._ident_next)),
-  _ident_first: $ => choice(
-    /([[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/,
-    /«[^»]+»/
-  ),
-  _ident_next: $ => seq(
-    token.immediate('.'),
-    token.immediate(choice(/[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*/, /«[^»]+»/, /[0-9]+/))
-  ),
+  ident: $ => /(?:(?:[[\pL]--λΠΣ]|_[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ])[[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*|«[^»]+»)(?:\.(?:[[_\pL]--λΠΣ][[[0-9_'!?\pL]--λΠΣ][₀-₉][ₐ-ₜ][ᵢ-ᵪ]ⱼ]*|«[^»]+»|[0-9]+))*/,
 
   _ident_univ: $ => seq(token.immediate('.{'), sepBy1($._level, ','), '}'),
 
