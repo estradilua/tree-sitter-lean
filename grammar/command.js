@@ -40,9 +40,9 @@ const commands = {
   cmd_export: $ => seq('export', $.ident, '(', repeat1($.ident), ')'),
   cmd_open: $ => seq('open', $._open_decl),
   cmd_mutual: $ => 'mutual',
-  cmd_initialize: $ => prec(100, seq(declModifiers($), choice('initialize', 'builtin_initialize'),
+  cmd_initialize: $ => seq(declModifiers($), choice('initialize', 'builtin_initialize'),
     // HACK: see comment under POP_COL on scanner.c
-    optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq)),
+    optional(seq($._push_col, $.ident, $.type_spec, $.left_arrow, $._pop_col)), $.do_seq),
   cmd_in: $ => prec.right(seq($.command, 'in', $.command)),
   cmd_add_docstring: $ => seq($.documentation, 'add_decl_doc', $.ident),
   cmd_register_tactic_tag: $ => seq(optional($.documentation), 'register_tactic_tag', $.ident, $.str_lit),

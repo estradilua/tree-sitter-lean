@@ -58,7 +58,7 @@ const terms = {
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
 
   // Notation.lean
-  term_list: $ => prec(-10, seq('[', sepBy($.term, ',', true), ']')),
+  term_list: $ => seq('[', $._o, optional($._terms_comma), ']', $._c),
 
   term_other: $ => /[^\s[[_\pL]--λΠΣ]]/,
 }
@@ -72,14 +72,14 @@ export default {
 
   _ident_univ: $ => seq(token.immediate('.{'), sepBy1($._level, ','), '}'),
 
-  decl_ident: $ => prec(10, seq(
+  decl_ident: $ => seq(
     $.ident,
     optional(seq(
       '.{',
       sepBy1(/[^,}\s]/, ','),
       '}'
     ))
-  )),
+  ),
 
   // symbols
   left_arrow: $ => choice('←', '<-'),
@@ -143,14 +143,14 @@ export default {
   // where
   where_decls: $ => seq('where', sepBy1IndentSemicolon($, $.let_rec_decl)),
 
-  struct_inst_field: $ => prec.right(-10, seq(
+  struct_inst_field: $ => seq(
     $.ident,
     optional(seq(
       repeat(seq($.let_id_binder)),
       optType($),
       choice(seq($.defeq, $.term), $.match_alts)
     ))
-  )),
+  ),
 
   // have
   have_id_decl: $ => seq(have_id_lhs($), $.defeq, $.term),
@@ -168,7 +168,7 @@ export default {
   suffices_decl: $ => seq(optional(seq($._binder_ident, ':')), $.term, $.show_rhs),
 
   // fun
-  fun_binder: $ => prec(10, choice($.strict_implicit_binder, $.implicit_binder, $.inst_binder, $.term)),
+  fun_binder: $ => choice($.strict_implicit_binder, $.implicit_binder, $.inst_binder, $.term),
   basic_fun: $ => seq(repeat1($.fun_binder), optType($), $.fun_arrow, $.term),
 
   // argument
