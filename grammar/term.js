@@ -72,14 +72,14 @@ export default {
 
   _ident_univ: $ => seq(token.immediate('.{'), sepBy1($._level, ','), '}'),
 
-  decl_ident: $ => seq(
+  decl_ident: $ => prec(10, seq(
     $.ident,
     optional(seq(
       '.{',
       sepBy1(/[^,}\s]/, ','),
       '}'
     ))
-  ),
+  )),
 
   // symbols
   left_arrow: $ => choice('←', '<-'),
