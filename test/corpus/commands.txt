@@ -678,22 +678,7 @@ cursed type ascriptions
 
 ---
 
-(module
-  (command
-    (cmd_hash
-      (term
-        (term_paren
-          (term
-            (term_by
-              (tactic_seq
-                (tactic_seq_indented
-                  (tactic_p
-                    (tactic_other
-                      (ident)
-                      (term
-                        (term_other)
-                        (term_ident
-                          (ident))
-                        (term_other)
-                        (term_ident
-                          (ident))))))))))))))
+
+;; Local Variables:
+;; mode: rst
+;; End:
