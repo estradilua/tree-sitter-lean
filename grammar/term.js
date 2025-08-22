@@ -54,7 +54,7 @@ const terms = {
     $._pop_col
   ),
   term_fun: $ => seq($.lambda, choice($.basic_fun, $.match_alts)),
-  term_arrow: $ => prec(5, seq($._term_1, $.right_arrow, $.term)),
+  term_arrow: $ => seq($.right_arrow, $.term),
   term_dep_arrow: $ => seq($.bracketed_binder, $.right_arrow, $.term),
   term_explicit: $ => prec(10, seq('@', $._term_1)),
 

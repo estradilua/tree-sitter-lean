@@ -165,16 +165,16 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
           (ident))
         (type_spec
           (term
+            (term_type
+              (level_ident
+                (ident)))
             (term_arrow
-              (term_type
-                (level_ident
-                  (ident)))
               (right_arrow)
               (term
+                (term_type
+                  (level_ident
+                    (ident)))
                 (term_arrow
-                  (term_type
-                    (level_ident
-                      (ident)))
                   (right_arrow)
                   (term
                     (term_type
@@ -213,9 +213,9 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
                                 (ident)))))))
                     (right_arrow)
                     (term
+                      (term_ident
+                        (ident))
                       (term_arrow
-                        (term_ident
-                          (ident))
                         (right_arrow)
                         (term
                           (term_ident
@@ -228,9 +228,9 @@ inductive Either'' : Type u → Type v → Type (max u v + 1) where
           (ident)
           (type_spec
             (term
+              (term_ident
+                (ident))
               (term_arrow
-                (term_ident
-                  (ident))
                 (right_arrow)
                 (term
                   (term_ident
@@ -260,9 +260,9 @@ def AtLeastOne.head : AtLeastOne α → α
           (term
             (term_ident
               (ident))
+            (term_ident
+              (ident))
             (term_arrow
-              (term_ident
-                (ident))
               (right_arrow)
               (term
                 (term_ident
@@ -551,14 +551,14 @@ example : Foo := by
           (ident)
           (type_spec
             (term
+              (term_ident
+                (ident))
               (term_arrow
-                (term_ident
-                  (ident))
                 (right_arrow)
                 (term
+                  (term_ident
+                    (ident))
                   (term_arrow
-                    (term_ident
-                      (ident))
                     (right_arrow)
                     (term
                       (term_ident
