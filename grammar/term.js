@@ -64,7 +64,7 @@ const terms = {
   term_anonymous_ctor: $ => seq('⟨', $._o, optional($._terms_comma), '⟩', $._c),
   term_list: $ => seq('[', $._o, optional($._terms_comma), ']', $._c),
 
-  term_other: $ => /[^\s[[_\pL]--λΠΣ]]/,
+  term_other: $ => token(prec(-1, /[^\s]/)),
 }
 
 export default {
