@@ -509,13 +509,14 @@ end CategoryTheory
                               (tactic_seq
                                 (tactic_seq_indented
                                   (tactic_p
-                                    (tactic_other
-                                      (ident)
-                                      (term
-                                        (term_anonymous_ctor
-                                          (term
-                                            (term_ident
-                                              (ident)))))))
+                                    (tactic_rintro
+                                      (rintro_pat
+                                        (rcases_pat_tuple
+                                          (rcases_pat_lo
+                                            (rcases_pat_med
+                                              (rcases_pat
+                                                (rcases_pat_one
+                                                  (ident)))))))))
                                   (tactic_p
                                     (tactic_other
                                       (ident)
@@ -678,7 +679,79 @@ cursed type ascriptions
 
 ---
 
+(module
+  (command
+    (cmd_hash
+      (term
+        (term_type_ascription
+          (term
+            (term_by
+              (tactic_seq
+                (tactic_seq_indented
+                  (tactic_p
+                    (tactic_obtain
+                      (type_spec
+                        (term
+                          (term_ident
+                            (ident))))))))))
+          (term
+            (term_ident
+              (ident))))))))
 
-;; Local Variables:
-;; mode: rst
-;; End:
+=================
+dedent protection
+=================
+
+def bar : Nat := Id.run do
+  let foo {a :
+Unit} : Unit := sorry
+  sorry
+
+---
+
+(module
+  (command
+    (cmd_declaration
+      (definition
+        (decl_ident
+          (ident))
+        (type_spec
+          (term
+            (term_ident
+              (ident))))
+        (decl_val
+          (decl_val_simple
+            (defeq)
+            (term
+              (term_ident
+                (ident))
+              (term_do
+                (do_seq
+                  (do_seq_indent
+                    (do_seq_item
+                      (do_elem
+                        (do_let
+                          (let_decl
+                            (let_id_decl
+                              (let_id_lhs
+                                (ident)
+                                (binder
+                                  (bracketed_binder
+                                    (implicit_binder
+                                      (ident)
+                                      (type_spec
+                                        (term
+                                          (term_ident
+                                            (ident)))))))
+                                (type_spec
+                                  (term
+                                    (term_ident
+                                      (ident)))))
+                              (defeq)
+                              (term
+                                (term_sorry)))))))
+                    (do_seq_item
+                      (do_elem
+                        (do_expr
+                          (term
+                            (term_sorry)))))))))))))))
