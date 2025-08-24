@@ -33,4 +33,6 @@ export const many1Indent = ($, p) => seq($._push_col, sepBy1(p, $._eq_col_start)
 
 export const manyIndent = ($, p) => optional(many1Indent($, p))
 
-export const oneOf = ($, obj) => choice.apply(null, Object.keys(obj).map(k => $[k]))
+export const oneOf = ($, obj, exclude = [], include = []) => choice.apply(null,
+  Object.keys(obj).filter(k => !exclude.includes(k)).concat(include).map(k => $[k])
+)

@@ -114,7 +114,7 @@ static inline bool scan_raw_string_end(Scanner *scanner, TSLexer *lexer) {
 inline bool lookahead_dedent(TSLexer *lexer) {
   return (lexer->lookahead == ')' || lexer->lookahead == ']' ||
           lexer->lookahead == '}' || lexer->lookahead == 10217 ||
-          lexer->lookahead == ',' /* || lexer->lookahead == ':' */);
+          lexer->lookahead == ',' || lexer->lookahead == ':');
 }
 
 bool tree_sitter_lean_external_scanner_scan(void *payload, TSLexer *lexer,

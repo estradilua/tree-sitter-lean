@@ -5,10 +5,10 @@
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
 
 import { oneOf, sepBy1, sepBy1IndentSemicolon, sepByIndentSemicolon } from "./util.js"
-
-// @ts-check
+import rca, { tactic_rcases } from "./tactic/rcases.js"
 
 const tactics = {
   // Tactic.lean
@@ -25,6 +25,8 @@ const tactics = {
   tactic_cdot: $ => seq($.cdot, $.tactic_seq),
 
   tactic_other: $ => seq($.ident, optional($.term)),
+
+  ...tactic_rcases,
 }
 
 export default {
@@ -34,4 +36,8 @@ export default {
   tactic_seq_indented: $ => sepBy1IndentSemicolon($, $.tactic_p),
   tactic_seq_bracketed: $ => seq('{', optional($.tactic_seq_indented), '}'),
   tactic_seq: $ => choice($.tactic_seq_indented, $.tactic_seq_bracketed),
+
+  elim_target: $ => seq(optional(seq($._binder_ident, ':')), $.term),
+
+  ...rca,
 }
